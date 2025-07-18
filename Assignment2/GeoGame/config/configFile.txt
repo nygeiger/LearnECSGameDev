@@ -1,0 +1,5 @@
+Window 1280 720 60 0
+Font ../fonts/Bytesized/Bytesized-Regular.ttf 100 255 255 255
+Player 32 24 10 0 255 255 255 0 0 4 8
+Enemy 32 32 4 10 255 0 0 4 3 9 45 30
+Bullet 6 6 30 255 255 255 0 255 255 4 6 100

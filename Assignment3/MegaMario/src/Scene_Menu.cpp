@@ -55,12 +55,22 @@ void Scene_Menu::sDoAction(const Action &action)
 
         if (action.name() == "UP")
         {
-            // if (m_selectedMenuIndex > 0) {}
-            // else {m_selectedMenuIndex = m_menuStrings.size() - /*fill the rest*/}
+            if (m_selectedMenuIndex == 0)
+            {
+                m_selectedMenuIndex = m_menuStrings.size() - 1;
+            }
+            else
+            {
+                m_selectedMenuIndex--;
+            }
         }
         else if (action.name() == "DOWN")
         {
-            // m_selectedMenuIndex = (m_selectedMenuIndex + 1) % m_
+            if (m_selectedMenuIndex >= m_menuStrings.size() - 1) {
+                m_selectedMenuIndex = 0;
+            } else {
+                m_selectedMenuIndex++;
+            }
         }
         else if (action.name() == "PLAY")
         {

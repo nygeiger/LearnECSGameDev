@@ -41,6 +41,7 @@ class CShape : public Component {
                 circle.setOutlineThickness(thickness);
                 circle.setOrigin({radius, radius});
             }
+        CShape() = default; // ??? Only put this here to constr Tuple
 
 
 };
@@ -50,6 +51,7 @@ class CCollision : public Component {
         float radius = 0;
 
         CCollision(float r) : radius(r){}
+        CCollision() = default; // ??? Only put this here to constr Tuple
 };
 
 class CScore : public Component {
@@ -58,6 +60,7 @@ class CScore : public Component {
         int score = 0;
     
         CScore(int s) : score(s){}
+        CScore() = default; // ??? Only put this here to constr Tuple
 
 };
 

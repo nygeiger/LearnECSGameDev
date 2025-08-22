@@ -8,7 +8,8 @@
 
 class GameEngine;
 
-typedef std::map<int, std::string> ActionMap;
+// typedef std::map<int, std::string> ActionMap;
+typedef std::map<sf::Keyboard::Scancode, std::string> ActionMap;
 
 class Scene
 {
@@ -31,17 +32,21 @@ public:
     virtual void sDoAction(const Action &action) = 0;
     virtual void sRender() = 0;
 
-    virtual void doAction(const Action &action);
+    // virtual void doAction(const Action &action);
+    // void doAction(const Action &action);
     void simulate(const size_t frames);
     void registerAction(sf::Keyboard::Scancode inputKey, const std::string &actionName);
 
     size_t width() const;
     size_t height() const;
     size_t currentFrame() const;
+    // virtual size_t width() const;
+    // virtual size_t height() const;
 
     bool hasEnded() const;
     const ActionMap &getActionMap() const;
-    void drawLine(const Vec2 &p1, const Vec2 &p2);
+    // void drawLine(const Vec2 &p1, const Vec2 &p2);
+    virtual void drawLine(const Vec2 &p1, const Vec2 &p2) const;
 };
 
 #endif

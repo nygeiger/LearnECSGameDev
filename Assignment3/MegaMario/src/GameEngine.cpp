@@ -136,11 +136,9 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
         else
         {
             const std::map sceneActionMap = currentScene()->getActionMap();
-            const auto actionFromMap = sceneActionMap.find(e.scancode);
-
-            if (actionFromMap != sceneActionMap.end())
+            if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
             {
-                currentScene()->sDoAction(Action(actionFromMap->second, ActionType::START));
+                currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::START));
             }
         }
     };

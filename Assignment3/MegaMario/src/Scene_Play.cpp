@@ -8,7 +8,7 @@
 #include <iostream>
 #include <cmath>
 
-Scene_Play::Scene_Play(GameEngine *gameEngine, const std::string &levelPath, const sf::Font &font)
+Scene_Play::Scene_Play(GameEngine *gameEngine, const std::string &levelPath, const sf::Font& font)
     : Scene(gameEngine), m_gridText(sf::Text(font)), m_levelPath(levelPath)
 {
     init(m_levelPath);
@@ -187,7 +187,7 @@ void Scene_Play::sCollision()
 
 void Scene_Play::sDoAction(const Action& action)
 {
-    if (action.type() == "Start")
+    if (action.type() == ActionType::START)
     {
  
         if (action.name() == "PAUSE") {
@@ -208,7 +208,7 @@ void Scene_Play::sDoAction(const Action& action)
         else if (action.name() == "UP") {
             m_player->getComponent<CInput>().up = true;
         }
-    } else if (action.type() == "END") {
+    } else if (action.type() == ActionType::END) {
 
         if (action.name() == "UP") {
             m_player->getComponent<CInput>().up = false;
@@ -237,6 +237,8 @@ void Scene_Play::sAnimation() {
 void Scene_Play::onEnd() {
     // TODO: When the scene ends, change back to the MENU scene
     //          use m_game.changeScene(correct params);
+    // m_game->changeScene("playScene", std::make_shared<Scene_Menu>(m_game, sf::Font()), true);
+    // m_game->changeScene("scene_play", std::make_shared<Scene_Menu>(sf::Font()));
     m_game->changeScene();
 }
 
@@ -293,7 +295,7 @@ void Scene_Play::sRender() {
 
     sf::View view = m_game->window().getView();
     // view.setCenter(windowCenterX, m_game.window().getSize().y - );
-    view.setCenter({windowCenterX, m_game->window().getSize().y});
+    view.setCenter({windowCenterX, static_cast<float>(m_game->window().getSize().y)});
     m_game->window().setView(view);
 
     // draw all Entity textures / animations
@@ -332,7 +334,7 @@ void Scene_Play::sRender() {
     }
 
     if (m_drawGrid) {
-        float leftX = m_game->window().getView().getCenter(). x ;//-
+        float leftX = m_game->window().getView().getCenter(). x ;//
         float rightX = leftX + width() + m_gridSize.x;
         float nextGridX = leftX - ((int)leftX % (int)m_gridSize.x);
 

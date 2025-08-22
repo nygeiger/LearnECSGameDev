@@ -27,7 +27,7 @@ class Scene_Play : public Scene {
     const Vec2              m_gridSize = {64, 64};
     sf::Text                m_gridText;
 
-    Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
+    // Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
 
     void init();
     void init(const std::string& levelPath);
@@ -35,11 +35,11 @@ class Scene_Play : public Scene {
     void loadLevel(const std::string& filename);
 
     void spawnPlayer();
-    void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity);
+    void spawnBullet(std::shared_ptr<Entity> entity);
     // EntityManager m_entityManager;
     void onEnd();
     void drawLine(const Vec2& p1, const Vec2& p2) const;
-    std::shared_ptr<Entity> Scene_Play::player();
+    std::shared_ptr<Entity> player();
 
 
     //Systems
@@ -57,6 +57,7 @@ class Scene_Play : public Scene {
 
 
     public:
+        Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
         // Systems
         void update();
 };

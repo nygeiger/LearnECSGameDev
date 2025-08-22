@@ -1,6 +1,10 @@
 #include "../headers/Entity.h"
 
-Entity::Entity(const size_t id, const std::string & tag) : m_id(id), m_tag(tag) {};
+Entity::Entity(const size_t id, const std::string & tag) : m_id(id), m_tag(tag){
+    // // m_components = std::make_tuple(CTransform, CLifespan, CInput, CBoundingBox, CAnimation, CGravity, CState);
+    // m_components = std::make_tuple(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    // ComponentTuple tempVari = new ComponentTuple;
+};
 
 bool Entity::isActive() const {
     return m_active;

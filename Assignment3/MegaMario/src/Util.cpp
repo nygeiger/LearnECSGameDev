@@ -5,7 +5,8 @@
 
 static const float PIXEL_DIM_SIZE = 64.0f;
 
-const enum PlayerStates {STAND, JUMP, RUN};
+enum PlayerStates {STAND, JUMP, RUN};
+// enum ActionType {START, END};
 
 
 // static const std::map<std::string, PlayerStates> PlayerStatesMap = {

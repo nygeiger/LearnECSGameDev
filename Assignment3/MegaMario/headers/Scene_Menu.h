@@ -23,7 +23,8 @@ class Scene_Menu : public Scene {
         void sDoAction(const Action& action);
 
     public:
-        Scene_Menu(GameEngine* gameEngine = nullptr);
+        Scene_Menu(const sf::Font& font, GameEngine* gameEngine);
+        Scene_Menu(const Scene_Menu& obj);
         void sRender();
 
 };

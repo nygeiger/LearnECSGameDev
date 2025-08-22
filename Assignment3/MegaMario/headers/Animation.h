@@ -7,15 +7,17 @@
 #include <SFML/Graphics.hpp>
 
 class Animation {
-    sf::Sprite  m_sprite;
+    // sf::Sprite  m_sprite;
     size_t      m_frameCount = 1;   // total number of frames of anmation
     size_t      m_currentFrame = 0; // the current frame of animation being played
     size_t      m_speed = 0;        // the speed to play this animation
     Vec2        m_size = {1, 1};    // size of the animation frame
-    std::string m_name = "none";
+    // std::string m_name = "none";
 
     public:
-        // Animation();
+        std::string m_name = "none"; // moved to public so that there can be a default constructor
+        sf::Sprite  m_sprite; // moved to public so that there can be a default constructor
+        Animation();
         Animation(const std::string& name, const sf::Texture& t);
         Animation(const std::string& name, const sf::Texture& t, size_t frameCount, size_t speed);
 

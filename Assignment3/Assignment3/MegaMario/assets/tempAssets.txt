@@ -1,5 +1,0 @@
-Texture TexBullet MegaMario/assets/textures/mmanBullet.png
-Texture TexQBlock MegaMario/assets/textures/questionBlocks.png
-Texture TexExplode MegaMario/assets/textures/explosionSheet.png
-Font byteSized MegaMario/assets/fonts/gamtex/Gamtex.ttf
-Font byteSized2 ../assets/fonts/gamtex/Gamtex.ttf

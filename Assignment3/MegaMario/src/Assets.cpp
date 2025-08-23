@@ -29,12 +29,11 @@ void Assets::addAnimation(const std::string &animationName, std::string &texture
 
 void Assets::addFont(const std::string &fontName, const std::string &path)
 {
-    // const std::string fontLocation = "../fonts/Bytesized/Bytesized-Regular.ttf";
-    const std::ifstream file("../assets/fonts/gamtex/Gamtex.ttf");
-    const bool tempVari = file.good();
-    const bool tempVari2 = file.bad();
-    const bool tempVari3 = file.eof();
-    const bool tempVari4 = file.fail();
+    // const std::ifstream file("../assets/fonts/gamtex/Gamtex.ttf");
+    // const bool tempVari = file.good();
+    // const bool tempVari2 = file.bad();
+    // const bool tempVari3 = file.eof();
+    // const bool tempVari4 = file.fail();
     m_fontMap[fontName] = sf::Font();
     if (!m_fontMap[fontName].openFromFile(path))
     {

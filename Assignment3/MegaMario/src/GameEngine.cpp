@@ -21,7 +21,7 @@ void GameEngine::init(const std::string &path)
     m_assets.loadFromFile(path);
 
     // m_window.create(sf::VideoMode({1280, 768}), "Definitely not Ma");
-    m_window.create(sf::VideoMode({1280, 720}), "Definitely not Ma");
+    m_window.create(sf::VideoMode({1280, 768}), "Definitely not Mario");
 
     m_window.setFramerateLimit(60);
 
@@ -143,7 +143,14 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
         }
     };
 
-    const auto &keyReleasedEvent = [this](sf::Event::KeyReleased e) {};
+    const auto &keyReleasedEvent = [this](sf::Event::KeyReleased e)
+    {
+        const std::map sceneActionMap = currentScene()->getActionMap();
+        if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
+        {
+            currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::END));
+        }
+    };
 
     m_window.handleEvents(onClose, keyPressedEvent, keyReleasedEvent);
 }

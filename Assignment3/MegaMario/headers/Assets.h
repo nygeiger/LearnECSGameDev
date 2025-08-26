@@ -15,6 +15,7 @@ class Assets {
 
     void addTexture(const std::string& textureName, const std::string& path, const bool smooth);
     void addAnimation(const std::string& animationName, std::string& texture, size_t frameCount, size_t speed);
+    void addAnimation(const std::string &animationName, std::string &textureName, size_t frameCount, size_t speed, size_t xPos, size_t yPos, size_t textCols, size_t textRows);
     void addFont(const std::string& fontName, const std::string& path);
 
     public:

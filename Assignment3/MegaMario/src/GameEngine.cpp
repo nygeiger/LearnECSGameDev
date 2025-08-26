@@ -21,7 +21,9 @@ void GameEngine::init(const std::string &path)
     m_assets.loadFromFile(path);
 
     // m_window.create(sf::VideoMode({1280, 768}), "Definitely not Ma");
-    m_window.create(sf::VideoMode({1280, 768}), "Definitely not Mario");
+    m_window.create(sf::VideoMode({1284, 768}), "Definitely not Mario");
+    // 1284 / 12 = 107
+    // 768 / 12 = 64
 
     m_window.setFramerateLimit(60);
 
@@ -115,6 +117,7 @@ void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene
 {
 
     m_currentScene = sceneName;
+    // m_sceneMap[sceneName].reset();
     m_sceneMap[sceneName] = scene;
 
     // m_sceneMap.erase(sceneName);

@@ -1,5 +1,5 @@
 Texture TexBullet ../assets/textures/mmanBullet.png
-Texture Brick ../assets/textures/marioBrick.png
+Texture Brick ../assets/textures/marioBrick.jpeg
 Texture floorBlock ../assets/textures/marioFloorBrick.png
 Texture TexQBlock ../assets/textures/questionBlocks.png
 Texture TexExplode ../assets/textures/explosionSheet.png
@@ -12,5 +12,11 @@ Texture GoombaSquished ../assets/textures/marioGoombaSquished.png
 Texture Hill ../assets/textures/marioHill.png
 Texture pipe ../assets/textures/marioPipe.png
 Texture MegaMan ../assets/textures/mmSpriteMap.png
+Texture MegaMan2 ../assets/textures/mmSpriteMap2.png
 Font byteSized ../assets/fonts/gamtex/Gamtex.ttf
 Font byteSized2 ../assets/fonts/gamtex/Gamtex.ttf
+AnimationMap Stand MegaMan 2 30 0 0 10 7
+Animation Brick Brick 1 1
+Animation Block floorBlock 1 1
+Animation Question TexQBlock 3 12
+AnimationMap Run MegaMan 3 4 3 0 10 7

@@ -19,6 +19,10 @@ Scene_Menu::Scene_Menu(const Scene_Menu &obj) : m_menuText(obj.m_menuText), m_me
 
 void Scene_Menu::init()
 {
+    // registerAction(sf::Keyboard::Scancode::W, SceneMenuActions::UP);
+    // registerAction(sf::Keyboard::Scancode::S, SceneMenuActions::DOWN);
+    // registerAction(sf::Keyboard::Scancode::D, SceneMenuActions::PLAY);
+    // registerAction(sf::Keyboard::Scancode::Escape, SceneMenuActions::QUIT);
     registerAction(sf::Keyboard::Scancode::W, "UP");
     registerAction(sf::Keyboard::Scancode::S, "DOWN");
     registerAction(sf::Keyboard::Scancode::D, "PLAY");
@@ -35,6 +39,24 @@ void Scene_Menu::init()
 
     m_menuText.setFont(m_game->getAssets().getFont("byteSized2"));
     m_menuText.setCharacterSize(64);
+
+    auto brick = m_entityManager.addEntity("tile");
+    // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
+    // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    brick->addComponent<CTransform>(Vec2(1280 / 2 - 30, 768 / 2));
+
+    auto brick2 = m_entityManager.addEntity("tile");
+    // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
+    // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    brick2->addComponent<CAnimation>(m_game->getAssets().getAnimation("Stand"), true);
+    brick2->addComponent<CTransform>(Vec2(1280 / 2, 768 / 2));
+
+    auto brick3 = m_entityManager.addEntity("tile");
+    // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
+    // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    brick3->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    brick3->addComponent<CTransform>(Vec2(1280 / 2 + 30, 768 / 2));
 }
 
 void Scene_Menu::update()
@@ -45,6 +67,7 @@ void Scene_Menu::update()
 
 void Scene_Menu::onEnd()
 {
+    m_game->window().clear(sf::Color::White);
     // TODO: Figure out what to do on end here
 }
 
@@ -66,9 +89,12 @@ void Scene_Menu::sDoAction(const Action &action)
         }
         else if (action.name() == "DOWN")
         {
-            if (m_selectedMenuIndex >= m_menuStrings.size() - 1) {
+            if (m_selectedMenuIndex >= m_menuStrings.size() - 1)
+            {
                 m_selectedMenuIndex = 0;
-            } else {
+            }
+            else
+            {
                 m_selectedMenuIndex++;
             }
         }
@@ -123,5 +149,26 @@ void Scene_Menu::sRender()
     // m_menuText.setCharacterSize(20);
     // m_menuText.setFillColor(sf::Color::Black);
     // m_menuText.setString("up: w   down: s  play: d  back: ");
+
+    for (auto e : m_entityManager.getEntities())
+    {
+        auto &transform = e->getComponent<CTransform>();
+
+        if (e->hasComponent<CAnimation>())
+        {
+            auto &animation = e->getComponent<CAnimation>().animation;
+            animation.update(); // ???
+            auto tempVari = animation.getSprite();
+            auto tempVari2 = animation.getSize();
+            animation.getSprite().setRotation(sf::degrees(transform.angle));
+            animation.getSprite().setPosition({transform.pos.x, transform.pos.y});
+            animation.getSprite().setScale({transform.scale.x, transform.scale.y});
+            m_game->window().draw(animation.getSprite());
+        }
+    }
     m_game->window().display();
 }
+
+// void Scene_Menu::registerAction(sf::Keyboard::Scancode inputKey, SceneMenuActions actionName) {
+//     m_actionMap[inputKey] = actionName;
+// }

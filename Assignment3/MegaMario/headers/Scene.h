@@ -35,6 +35,7 @@ public:
     // virtual void doAction(const Action &action);
     // void doAction(const Action &action);
     void simulate(const size_t frames);
+    // virtual void registerAction(sf::Keyboard::Scancode inputKey, const std::string &actionName);
     void registerAction(sf::Keyboard::Scancode inputKey, const std::string &actionName);
 
     size_t width() const;

@@ -16,13 +16,19 @@ Scene_Play::Scene_Play(GameEngine *gameEngine, const std::string &levelPath, con
 
 void Scene_Play::init(const std::string &levelPath)
 {
+    // registerAction(sf::Keyboard::Scancode::P, ScenePlayActions::PAUSE);
+    // registerAction(sf::Keyboard::Scancode::Escape, ScenePlayActions::QUIT);
+    // registerAction(sf::Keyboard::Scancode::T, ScenePlayActions::TOGGLE_TEXTURE);
+    // registerAction(sf::Keyboard::Scancode::C, ScenePlayActions::TOGGLE_COLLISION);
+    // registerAction(sf::Keyboard::Scancode::G, ScenePlayActions::TOGGLE_GRID);
     registerAction(sf::Keyboard::Scancode::P, "PAUSE");
-    registerAction(sf::Keyboard::Scancode::Escape, "Quit");
+    registerAction(sf::Keyboard::Scancode::Escape, "QUIT");
     registerAction(sf::Keyboard::Scancode::T, "TOGGLE_TEXTURE");
     registerAction(sf::Keyboard::Scancode::C, "TOGGLE_COLLISION");
     registerAction(sf::Keyboard::Scancode::G, "TOGGLE_GRID");
 
     // TODO: Register all other gameplay Actions
+    // registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
     registerAction(sf::Keyboard::Scancode::W, "UP");
 
     m_gridText.setCharacterSize(12);
@@ -61,6 +67,7 @@ void Scene_Play::loadLevel(const std::string &fileName)
     auto brick = m_entityManager.addEntity("tile");
     // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
     brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Brick"), true);
+    auto tempVari = brick->getComponent<CAnimation>().animation.m_sprite.getScale();
     brick->addComponent<CTransform>(Vec2(96, 480));
 
     // NOTE: Your final code should position the entity with the grid x,y position read from the file:
@@ -363,6 +370,10 @@ void Scene_Play::drawLine(const Vec2& p1, const Vec2& p2) const{
     // sf::Vertex line[] = {{sf::Vector2f(p1.x, p1.y)}, {sf::Vector2f(p2.x, p2.y)}};
     // m_game->window().draw(line, 2, sf::Lines);
 }
+
+// void Scene_Play::registerAction(sf::Keyboard::Scancode inputKey, ScenePlayActions actionName) {
+//     m_actionMap[inputKey] = actionName;
+// }
 
 std::shared_ptr<Entity> Scene_Play::player() {
     auto& players = m_entityManager.getEntities("player");

@@ -26,6 +26,10 @@ void Assets::addAnimation(const std::string &animationName, std::string &texture
 {
     m_animationMap[animationName] = Animation(animationName, getTexture(textureName), frameCount, speed);
 }
+void Assets::addAnimation(const std::string &animationName, std::string &textureName, size_t frameCount, size_t speed, size_t xPos, size_t yPos, size_t textCols, size_t textRows) // Consolidate??
+{
+    m_animationMap[animationName] = Animation(animationName, getTexture(textureName), frameCount, speed, xPos, yPos, textCols, textRows);
+}
 
 void Assets::addFont(const std::string &fontName, const std::string &path)
 {
@@ -63,9 +67,16 @@ void Assets::loadFromFile(const std::string &path)
         else if (str == "Animation")
         {
             std::string name, texture;
-            size_t frames, speed;
+            size_t frames, speed, xPos, yPos, textCols, textRows;
             file >> name >> texture >> frames >> speed;
             addAnimation(name, texture, frames, speed);
+        }
+        else if (str == "AnimationMap") //Figure out how to consolidate all Animation logic
+        {
+            std::string name, texture;
+            size_t frames, speed, xPos, yPos, textCols, textRows;
+            file >> name >> texture >> frames >> speed >> xPos >> yPos >> textCols >> textRows;
+            addAnimation(name, texture, frames, speed, xPos, yPos, textCols, textRows);
         }
         else if (str == "Font")
         {

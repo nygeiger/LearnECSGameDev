@@ -8,6 +8,8 @@
 #include <memory>
 #include <deque>
 
+// enum SceneMenuActions {UP, DOWN, PLAY, QUIT}; // Use this instead of string? Does this go here or utli file (probably here)
+
 
 class Scene_Menu : public Scene {
     protected:
@@ -20,6 +22,7 @@ class Scene_Menu : public Scene {
         void init();
         void update();
         void onEnd();
+        // void registerAction(sf::Keyboard::Scancode inputKey, SceneMenuActions actionName);
         void sDoAction(const Action& action);
 
     public:

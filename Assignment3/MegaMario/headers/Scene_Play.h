@@ -10,6 +10,7 @@
 #include <map>
 
 
+// enum ScenePlayActions {PAUSE, QUIT, TOGGLE_TEXTURE, TOGGLE_COLLISION, TOGGLE_GRID, UP};
 
 class Scene_Play : public Scene {
 
@@ -39,6 +40,7 @@ class Scene_Play : public Scene {
     // EntityManager m_entityManager;
     void onEnd();
     void drawLine(const Vec2& p1, const Vec2& p2) const;
+    // void Scene_Play::registerAction(sf::Keyboard::Scancode inputKey, ScenePlayActions actionName);
     std::shared_ptr<Entity> player();
 
 

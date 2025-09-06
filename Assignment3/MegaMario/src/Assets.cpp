@@ -1,7 +1,6 @@
 // #include "../headers/Assets.h"
 #include "headers/Assets.h"
 
-
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -71,7 +70,7 @@ void Assets::loadFromFile(const std::string &path)
             file >> name >> texture >> frames >> speed;
             addAnimation(name, texture, frames, speed);
         }
-        else if (str == "AnimationMap") //Figure out how to consolidate all Animation logic
+        else if (str == "AnimationMap") // Figure out how to consolidate all Animation logic
         {
             std::string name, texture;
             size_t frames, speed, xPos, yPos, textCols, textRows;
@@ -84,6 +83,11 @@ void Assets::loadFromFile(const std::string &path)
             file >> name >> path;
             addFont(name, path);
         }
+        else if (str.length() == 0 || str.find("/") != -1 || str.find("-") != -1 || str.find("*") != -1) { // instead use que to detect multi line comments??
+            std::string tempLine;
+            std::getline(file, tempLine);
+            const bool bp = false;
+        }
         else
         {
             std::cerr << "Unknown Asset Type: " << str << std::endl;
@@ -91,7 +95,7 @@ void Assets::loadFromFile(const std::string &path)
     }
 }
 
-const sf::Texture& Assets::getTexture(const std::string &textureName) const
+const sf::Texture &Assets::getTexture(const std::string &textureName) const
 {
     assert(m_textureMap.find(textureName) != m_textureMap.end());
     return m_textureMap.at(textureName);
@@ -103,7 +107,7 @@ const Animation &Assets::getAnimation(const std::string &animationName) const
     return m_animationMap.at(animationName);
 }
 
-const sf::Font &Assets::getFont(const std::string& fontName) const
+const sf::Font &Assets::getFont(const std::string &fontName) const
 {
     assert(m_fontMap.find(fontName) != m_fontMap.end());
     return m_fontMap.at(fontName);

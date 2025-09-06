@@ -47,7 +47,7 @@ public:
     bool hasEnded() const;
     const ActionMap &getActionMap() const;
     // void drawLine(const Vec2 &p1, const Vec2 &p2);
-    virtual void drawLine(const Vec2 &p1, const Vec2 &p2) const;
+    // virtual void drawLine(const Vec2 &p1, const Vec2 &p2) const;
 };
 
 #endif

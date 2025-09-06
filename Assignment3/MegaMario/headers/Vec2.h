@@ -8,7 +8,7 @@ public:
     float y=0;
 
     Vec2();
-    Vec2(float x, float y);
+    Vec2(const float x, const float y);
 
     bool operator==(const Vec2 & rhs) const;
     bool operator!=(const Vec2 & rhs) const;

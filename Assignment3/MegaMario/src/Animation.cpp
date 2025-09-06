@@ -30,7 +30,8 @@ Animation::Animation(const std::string &name, const sf::Texture &t, size_t frame
     m_size = Vec2((float)t.getSize().x / cols, (float)t.getSize().y / rows);
     m_sprite.setOrigin({m_size.x / 2.0f, m_size.y / 2.0f});
 
-    sf::Vector2i textureRectPosition = {static_cast<int>(std::floor(m_currentFrame) * m_size.x * m_initialFrameXPos), static_cast<int>(std::floor(m_currentFrame) * m_size.y * m_initialFrameYPos)};
+    // sf::Vector2i textureRectPosition = {static_cast<int>(std::floor(m_currentFrame) * m_size.x * m_initialFrameXPos), static_cast<int>(std::floor(m_currentFrame) * m_size.y * m_initialFrameYPos)};
+    sf::Vector2i textureRectPosition = {static_cast<int>( m_initialFrameXPos * m_size.x ), static_cast<int>( m_initialFrameYPos * m_size.y )};
     sf::Vector2i textureRectSize = {static_cast<int>(m_size.x), static_cast<int>(m_size.y)};
     m_sprite.setTextureRect({{textureRectPosition.x, textureRectPosition.y}, {textureRectSize.x, textureRectSize.y}});
     // m_sprite.setTextureRect(sf::IntRect({static_cast<int>( std::floor(m_currentFrame) * m_size.x * m_currentFrameXPos), static_cast<int>( std::floor(m_currentFrame) * m_size.y * m_currentFrameYPos)},{static_cast<int>(m_size.x), static_cast<int>(m_size.y)}));
@@ -41,7 +42,7 @@ Animation::Animation(const std::string &name, const sf::Texture &t, size_t frame
 void Animation::update()
 {
     // add the speed variable to the current frame
-    m_currentFrame++;
+    // m_currentFrame++;
 
     if (hasEnded())
     {
@@ -49,14 +50,14 @@ void Animation::update()
     } // TODO: ??? Reset on ani reset?
 
     if (!(m_frameCount <= 1) && (m_currentFrame % m_speed == 0))
-    { // will mostlikely have to delink direct logic to m_urrentFrame. Need it to only update when "% speed"
+    { // will mostlikely have to delink direct logic to m_currentFrame. Need it to only update when "% speed"
 
         // // add the speed variable to the current frame
         // m_currentFrame++;
         // const size_t currentAniFrame = m_currentFrame / m_speed;
         const size_t currentAniFrame = m_currentFrame / m_speed - 1;
 
-        if (m_frameCount < m_currentFrame)
+        if (m_frameCount < m_currentFrame) // TODO: Revalidate the purpose and logic of this conditional
         { // TODO: evaluate the purpose of hasEnded() and make sure not to invalidate it
 
             if (m_onSpriteMap)
@@ -90,6 +91,7 @@ void Animation::update()
     }
 
     // if (hasEnded()) {m_currentFrame = 0;} // TODO: ??? Reset on ani reset?
+    m_currentFrame++;
 }
 
 const Vec2 &Animation::getSize() const

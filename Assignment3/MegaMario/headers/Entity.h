@@ -104,4 +104,27 @@ public:
     }
 };
 
+// enum EntityType
+// {
+//     PLAYER,
+//     ENEMY,
+//     TILE,
+//     DECORATION,
+//     BULLET,
+//     SPECIAL_WEAPON,
+//     SMALL_ENEMY
+// };
+// static const std::map<EntityType, const std::string> EntityTypeMap = { // Needs static to prevent multiple definition error when included & used
+//     {EntityType::PLAYER, "player"},
+//     {EntityType::ENEMY, "enemy"},
+//     {EntityType::BULLET, "bullet"},
+//     {EntityType::SPECIAL_WEAPON, "special_weapon"},
+//     {EntityType::SMALL_ENEMY, "small_enemy"},
+//     {EntityType::TILE, "tile"},
+//     {EntityType::DECORATION, "decoration"}
+// };
+// static const std::string getEntityTypeTag(EntityType entityType) { // Needs static to prevent multiple definition error when included & used
+//     return EntityTypeMap.at(entityType); 
+// }
+
 #endif

@@ -77,23 +77,6 @@ void GameEngine::run()
     }
 }
 
-// void GameEngine::run()
-// {
-
-//     while (isRunning())
-//     {
-//         sUserInput();
-
-//         m_window.clear(sf::Color::Black); // # clear the window of wnything previously drawn
-//         sf::RectangleShape rect({80, 100});
-//         rect.setFillColor(sf::Color::Red);
-//         rect.setPosition({640, 384});
-
-//         m_window.draw(rect);
-//         m_window.display();
-//     }
-// }
-
 void GameEngine::quit()
 {
 }
@@ -102,23 +85,45 @@ void GameEngine::changeScene(Scene &scene)
 {
 }
 
-void GameEngine::changeScene()
+void GameEngine::changeScene(/*bool endCurrentScene = true*/)
 {
-    m_sceneMap.erase("scene_play");
+    // m_sceneMap.erase("scene_play");
 
-    sf::Font tempFont;
+    // sf::Font tempFont;
 
-    m_currentScene = "sene_menu";
+    // m_currentScene = "scene_menu";
+
     // m_sceneMap["scene_menu"] = std::make_shared<Scene_Menu>(tempFont ,*this); // Trigger constr initial err?
     // m_sceneMap["scene_menu"] = std::make_shared<Scene_Menu>(tempFont);
+
+    sf::Font tempFont;
+    m_sceneMap.erase(m_currentScene);
+    m_sceneMap["MENU"] = std::make_shared<Scene_Menu>(tempFont, this);
+    m_currentScene = "MENU";
+
+    // if (endCurrentScene) {
+    //         m_sceneMap.erase(m_currentScene);
+    // }
+
+    // m_currentScene = sceneName;
 }
 
 void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene)
 {
+    m_sceneMap[sceneName] = scene;
+
+    if (endCurrentScene)
+    {
+        m_sceneMap.erase(m_currentScene);
+    }
 
     m_currentScene = sceneName;
     // m_sceneMap[sceneName].reset();
-    m_sceneMap[sceneName] = scene;
+    // m_sceneMap[sceneName] = scene;
+
+    // if (endCurrentScene) {
+    //     m_sceneMap.erase(m_currentScene);
+    // }
 
     // m_sceneMap.erase(sceneName);
 }
@@ -132,17 +137,10 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
 
     const auto &keyPressedEvent = [this](sf::Event::KeyPressed e)
     {
-        if (e.scancode == sf::Keyboard::Scancode::Escape)
+        const std::map sceneActionMap = currentScene()->getActionMap();
+        if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
         {
-            m_window.close();
-        }
-        else
-        {
-            const std::map sceneActionMap = currentScene()->getActionMap();
-            if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
-            {
-                currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::START));
-            }
+            currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::START));
         }
     };
 

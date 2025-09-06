@@ -16,16 +16,16 @@ Animation N T F S
 */
 
 /*
-Animation Asset Specification (2): Account for animations within a collective sprite sheet
+Animation Asset Specification (2): Account for animations within a collective sprite sheet (Texture "T" is a collection of related & unrelated sprites)
 Animation N T F S X Y Cols Rows
 - Animation Name | N | std::sting
-- Texture Name | T | std::string
+- Texture (map) Name | T | std::string
 - Frame Count | F | int (number of frames in the animation)
 - Anim Speed | S | int (number of game frames between anim frames)
 - First Frame X-Cord | X | size_t
 - First Frame Y-Cord | Y | size_t
-- Columns in Texture | Cols | size_t
-- Rows in Texture | Rows | size_t
+- Columns in Texture (map) | Cols | size_t
+- Rows in Texture (map) | Rows | size_t
 */
 class Animation {
     // sf::Sprite  m_sprite;
@@ -54,5 +54,36 @@ class Animation {
         sf::Sprite& getSprite(); //should this not be () const{}?
 
 };
+
+// enum AnimationType
+// {
+//     STAND,
+//     BRICK,
+//     BLOCK,
+//     QUESTION,
+//     RUN
+// };
+// // static const std::map<AnimationType, const std::string> AnimationTypeMap = { // Needs static to prevent multiple definition error when included & used
+// //     {AnimationType::STAND, "Stand"},
+// //     {AnimationType::BRICK, "Brick"},
+// //     {AnimationType::BLOCK, "Block"},
+// //     {AnimationType::QUESTION, "Question"},
+// //     {AnimationType::RUN, "Run"}
+// // };
+// static const std::vector<const std::string> AnimationTypeList = { // Needs static to prevent multiple definition error when included & used
+//     "Stand",
+//     "Brick",
+//     "Block",
+//     "Question",
+//     "Run"
+// };
+
+// // static const std::string& getAnimationType(AnimationType animationType) { // Needs static to prevent multiple definition error when included & used
+// //     return AnimationTypeMap.at(animationType); 
+// // }
+
+// static const std::string& getAnimationType(AnimationType animationType) { // Needs static to prevent multiple definition error when included & used
+//     return AnimationTypeList.at(animationType); 
+// }
 
 #endif

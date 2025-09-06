@@ -9,7 +9,6 @@
 #include <memory>
 #include <map>
 
-
 // enum ScenePlayActions {PAUSE, QUIT, TOGGLE_TEXTURE, TOGGLE_COLLISION, TOGGLE_GRID, UP};
 
 class Scene_Play : public Scene {
@@ -25,7 +24,7 @@ class Scene_Play : public Scene {
     bool                    m_drawTextures = true;
     bool                    m_drawCollision = false;
     bool                    m_drawGrid = false;
-    const Vec2              m_gridSize = {64, 64};
+    const Vec2              m_gridSize = {64, 64}; // TODO: All scenes should have this?
     sf::Text                m_gridText;
 
     // Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
@@ -40,6 +39,7 @@ class Scene_Play : public Scene {
     // EntityManager m_entityManager;
     void onEnd();
     void drawLine(const Vec2& p1, const Vec2& p2) const;
+    void drawGrid() const;
     // void Scene_Play::registerAction(sf::Keyboard::Scancode inputKey, ScenePlayActions actionName);
     std::shared_ptr<Entity> player();
 

@@ -25,43 +25,8 @@ class CTransform : public Component {
 
     // Position, Velocity, angle
     CTransform() = default;
-    CTransform(const Vec2& p) :pos(p) {}
+    CTransform(const Vec2& p) : pos(p) {}
     CTransform(const Vec2 & p, const Vec2 scale, const Vec2 & v, float a) : pos(p), scale(scale), velocity(v), angle(a) {};
-};
-
-class CShape : public Component {
-
-    public:
-        sf::CircleShape circle;
-
-        CShape(float radius, int points, const sf::Color & fill, const sf::Color & outline, float thickness) :
-            circle(radius, points) {
-                circle.setFillColor(fill);
-                circle.setOutlineColor(outline);
-                circle.setOutlineThickness(thickness);
-                circle.setOrigin({radius, radius});
-            }
-        CShape() = default; // ??? Only put this here to constr Tuple
-
-
-};
-
-class CCollision : public Component {
-    public:
-        float radius = 0;
-
-        CCollision(float r) : radius(r){}
-        CCollision() = default; // ??? Only put this here to constr Tuple
-};
-
-class CScore : public Component {
-    public:
-
-        int score = 0;
-    
-        CScore(int s) : score(s){}
-        CScore() = default; // ??? Only put this here to constr Tuple
-
 };
 
 // class CLifespan : public Component {
@@ -132,7 +97,7 @@ class CGravity : public Component {
 
 class CState : public Component {
     public :
-        std::string state = "jumping";
+        std::string state = "jumping"; // Change?
         CState() = default;
         CState(const std::string s) : state(s){}
 };

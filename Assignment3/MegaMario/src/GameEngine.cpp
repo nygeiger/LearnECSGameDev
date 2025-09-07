@@ -68,6 +68,10 @@ sf::RenderWindow &GameEngine::window()
 //     return m_window;
 // }
 
+const bool GameEngine::debug() {
+    return m_debug;
+}
+
 void GameEngine::run()
 {
     while (isRunning())
@@ -141,6 +145,12 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
         if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
         {
             currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::START));
+        }
+
+        /// Only for debug, don't bind key to anything else
+
+        if (e.scancode == sf::Keyboard::Scancode::L) {
+            m_debug = !m_debug;
         }
     };
 

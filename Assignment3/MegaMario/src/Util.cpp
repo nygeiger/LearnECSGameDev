@@ -33,6 +33,7 @@ struct EntityType
     inline static const std::string BULLET = "bullet";
     inline static const std::string SPECIAL_WEAPON = "special_weapon";
     inline static const std::string SMALL_ENEMY = "small_enemy";
+    inline static const std::string COLLISION_VISUAL = "collision_visual";
 };
 // enum struct EntityType
 // {

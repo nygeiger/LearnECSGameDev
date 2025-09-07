@@ -50,7 +50,7 @@ void Scene_Menu::init()
     brick->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::QUESTION), true); // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
     brick->addComponent<CTransform>(Vec2(1280 / 2 - 30, 768 / 2));
 
-     auto brick2 = m_entityManager.addEntity(EntityType::TILE); // auto brick2 = m_entityManager.addEntity("tile");
+    auto brick2 = m_entityManager.addEntity(EntityType::TILE); // auto brick2 = m_entityManager.addEntity("tile");
     // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
     // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
     brick2->addComponent<CAnimation>(m_game->getAssets().getAnimation("Stand"), true);
@@ -74,9 +74,7 @@ void Scene_Menu::init()
     jumpManBlock->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
     jumpManBlock->addComponent<CTransform>(Vec2(1280 / 2 + 90, 768 / 2 - 64));
 
-    
     // drawLine({350, 350},{650, 650});
-
 }
 
 void Scene_Menu::update()
@@ -122,8 +120,8 @@ void Scene_Menu::sDoAction(const Action &action)
         else if (action.name() == "PLAY")
         {
             // m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_selectedMenuIndex, m_game->getAssets().getFont("FontName")), true); // This is butchured fasho
-            m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex], m_game->getAssets().getFont("byteSized2")), true); 
-            // m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, "Level 1", m_game->getAssets().getFont("byteSized2")), false); 
+            m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex], m_game->getAssets().getFont("byteSized2")), true);
+            // m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, "Level 1", m_game->getAssets().getFont("byteSized2")), false);
         }
         else if (action.name() == "QUIT")
         {
@@ -167,7 +165,7 @@ void Scene_Menu::sRender()
     }
 
     // draw the controls in the bottom-left
-    sf::Text controlsText(m_game->getAssets().getFont("byteSized2"), "up: w   down: s  play: d  back: ");
+    sf::Text controlsText(m_game->getAssets().getFont("byteSized2"), "up: w   down: s  play: d  back: esc  debug: L");
     controlsText.setCharacterSize(20);
     controlsText.setFillColor(sf::Color::Black);
     // controlsText.setPosition({});
@@ -195,48 +193,61 @@ void Scene_Menu::sRender()
         }
     }
 
-    if (m_drawGrid) {
-   drawGrid();
-}
-    // draw lines end
+    if (m_drawGrid)
+    {
+        drawGrid();
+    }
+
+    if (m_game->debug())
+    {
+        sf::Text debugText(m_game->getAssets().getFont("byteSized2"), "IN DEBUG MODE");
+        debugText.setCharacterSize(20);
+        debugText.setFillColor(sf::Color::Black);
+        debugText.setPosition({static_cast<float>(m_game->window().getSize().x / 2), 32});
+        m_game->window().draw(debugText);
+    }
 
     m_game->window().display();
 }
 
-void Scene_Menu::drawLine(const Vec2 &p1, const Vec2 &p2) const {
+void Scene_Menu::drawLine(const Vec2 &p1, const Vec2 &p2) const
+{
     sf::Vertex line[] = {{sf::Vector2f(p1.x, p1.y)}, {sf::Vector2f(p2.x, p2.y)}};
     m_game->window().draw(line, 2, sf::PrimitiveType::Lines);
     // sf::Vertex line[] = {{sf::Vector2f(p1.x, p1.y)}, {sf::Vector2f(p2.x, p2.y)}};
     // m_game->window().draw(line, 2, sf::Lines);
 }
 
-void Scene_Menu::drawGrid() const {
-        // draw lines start
+void Scene_Menu::drawGrid() const
+{
+    // draw lines start
     // drawLine({350, 350},{650, 650});
     // drawLine({351, 351},{651, 651});
     // drawLine({352, 352},{652, 652});
     // drawLine({265, 477},{53, 53});
 
-        // #### Grid = divide screen by 12ths
-//     const int num_grid_blocks = 12; // Grid is divided into 1/<int> equal parts
+    // #### Grid = divide screen by 12ths
+    //     const int num_grid_blocks = 12; // Grid is divided into 1/<int> equal parts
     // const sf::Vector2u window_size = m_game->window().getSize();
-//     const float grid_blocks_horz_width = window_size.x / num_grid_blocks;
-//     const float grid_blocks_vert_height = window_size.y / num_grid_blocks;
-//      for (float i = 1; i < num_grid_blocks; i++) {
-//         drawLine({i * grid_blocks_horz_width, 0}, {i * grid_blocks_horz_width, static_cast<float>(window_size.y)});
-//         drawLine({0, i * grid_blocks_vert_height}, {static_cast<float>(window_size.x), i * grid_blocks_vert_height});
-//     }
+    //     const float grid_blocks_horz_width = window_size.x / num_grid_blocks;
+    //     const float grid_blocks_vert_height = window_size.y / num_grid_blocks;
+    //      for (float i = 1; i < num_grid_blocks; i++) {
+    //         drawLine({i * grid_blocks_horz_width, 0}, {i * grid_blocks_horz_width, static_cast<float>(window_size.y)});
+    //         drawLine({0, i * grid_blocks_vert_height}, {static_cast<float>(window_size.x), i * grid_blocks_vert_height});
+    //     }
 
     const sf::Vector2u window_size = m_game->window().getSize();
     const int gridBlockSize = 64;
     const int maxGridLines = window_size.x > window_size.y ? window_size.x / gridBlockSize : window_size.y / gridBlockSize;
     const int numVerticleLinePoints = window_size.x / gridBlockSize;
 
-     for (float i = 1; i < maxGridLines; i++) {
+    for (float i = 1; i < maxGridLines; i++)
+    {
         drawLine({i * gridBlockSize, 0}, {i * 64, static_cast<float>(window_size.y)});
         drawLine({0, i * gridBlockSize}, {static_cast<float>(window_size.x), i * gridBlockSize});
 
-        for (float j = 0; j < numVerticleLinePoints; j++) {
+        for (float j = 0; j < numVerticleLinePoints; j++)
+        {
 
             std::ostringstream coordinateString;
             coordinateString << "( " << i << ", " << j << ")";
@@ -248,9 +259,7 @@ void Scene_Menu::drawGrid() const {
             m_game->window().draw(coordinateText);
         }
     }
-
 }
-
 
 // void Scene_Menu::registerAction(sf::Keyboard::Scancode inputKey, SceneMenuActions actionName) {
 //     m_actionMap[inputKey] = actionName;

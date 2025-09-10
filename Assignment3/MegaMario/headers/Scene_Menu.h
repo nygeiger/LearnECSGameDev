@@ -35,4 +35,17 @@ class Scene_Menu : public Scene {
 
 };
 
+// registerAction(sf::Keyboard::Scancode::W, "UP");
+//     registerAction(sf::Keyboard::Scancode::S, "DOWN");
+//     registerAction(sf::Keyboard::Scancode::D, "PLAY");
+//     registerAction(sf::Keyboard::Scancode::Escape, "QUIT");
+//     registerAction(sf::Keyboard::Scancode::G, "TOGGLE_GRID");
+namespace SceneMenuActions {
+    static const std::string UP = "UP";
+    static const std::string DOWN = "DOWN";
+    static const std::string PLAY ="PLAY";
+    static const std::string QUIT ="QUIT";
+    static const std::string TOGGLE_GRID = "TOGGLE_GRID";
+};
+
 #endif

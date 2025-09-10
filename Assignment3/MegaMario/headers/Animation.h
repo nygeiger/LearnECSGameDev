@@ -55,35 +55,14 @@ class Animation {
 
 };
 
-// enum AnimationType
-// {
-//     STAND,
-//     BRICK,
-//     BLOCK,
-//     QUESTION,
-//     RUN
-// };
-// // static const std::map<AnimationType, const std::string> AnimationTypeMap = { // Needs static to prevent multiple definition error when included & used
-// //     {AnimationType::STAND, "Stand"},
-// //     {AnimationType::BRICK, "Brick"},
-// //     {AnimationType::BLOCK, "Block"},
-// //     {AnimationType::QUESTION, "Question"},
-// //     {AnimationType::RUN, "Run"}
-// // };
-// static const std::vector<const std::string> AnimationTypeList = { // Needs static to prevent multiple definition error when included & used
-//     "Stand",
-//     "Brick",
-//     "Block",
-//     "Question",
-//     "Run"
-// };
-
-// // static const std::string& getAnimationType(AnimationType animationType) { // Needs static to prevent multiple definition error when included & used
-// //     return AnimationTypeMap.at(animationType); 
-// // }
-
-// static const std::string& getAnimationType(AnimationType animationType) { // Needs static to prevent multiple definition error when included & used
-//     return AnimationTypeList.at(animationType); 
-// }
+namespace AnimationType
+{
+    static const std::string STAND = "Stand";
+    static const std::string RUN = "Run";
+    static const std::string JUMP = "Jump";
+    static const std::string BRICK = "Brick";
+    static const std::string BLOCK = "Block";
+    static const std::string QUESTION = "Question";
+};
 
 #endif

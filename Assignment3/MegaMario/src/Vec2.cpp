@@ -4,9 +4,7 @@
 
 Vec2::Vec2(){};
 
-// Vec2::Vec2(float xin, float yin) : x(xin), y(yin) {};
-Vec2::Vec2(const float xin, const float yin) : x(xin), y(yin){}
-// Vec2::Vec2(const int xin, const int yin) : x(static_cast<float>(xin)), y(static_cast<float>(yin)){}
+Vec2::Vec2(const float xin, const float yin) : x(xin), y(yin){} // pass by refrence?
 
 bool Vec2::operator==(const Vec2 & rhs) const {
     return (x == rhs.x && y == rhs.y);

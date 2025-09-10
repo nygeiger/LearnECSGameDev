@@ -26,11 +26,11 @@ void Scene_Menu::init()
     // registerAction(sf::Keyboard::Scancode::S, SceneMenuActions::DOWN);
     // registerAction(sf::Keyboard::Scancode::D, SceneMenuActions::PLAY);
     // registerAction(sf::Keyboard::Scancode::Escape, SceneMenuActions::QUIT);
-    registerAction(sf::Keyboard::Scancode::W, "UP");
-    registerAction(sf::Keyboard::Scancode::S, "DOWN");
-    registerAction(sf::Keyboard::Scancode::D, "PLAY");
-    registerAction(sf::Keyboard::Scancode::Escape, "QUIT");
-    registerAction(sf::Keyboard::Scancode::G, "TOGGLE_GRID");
+    registerAction(sf::Keyboard::Scancode::W, SceneMenuActions::UP);
+    registerAction(sf::Keyboard::Scancode::S, SceneMenuActions::DOWN);
+    registerAction(sf::Keyboard::Scancode::D, SceneMenuActions::PLAY);
+    registerAction(sf::Keyboard::Scancode::Escape, SceneMenuActions::QUIT);
+    registerAction(sf::Keyboard::Scancode::G, SceneMenuActions::TOGGLE_GRID);
 
     m_title = "Mega Mario";
     m_menuStrings.push_back("Level 1");
@@ -95,7 +95,7 @@ void Scene_Menu::sDoAction(const Action &action)
     if (action.type() == ActionType::START)
     {
 
-        if (action.name() == "UP")
+        if (action.name() == SceneMenuActions::UP)
         {
             if (m_selectedMenuIndex == 0)
             {
@@ -106,7 +106,7 @@ void Scene_Menu::sDoAction(const Action &action)
                 m_selectedMenuIndex--;
             }
         }
-        else if (action.name() == "DOWN")
+        else if (action.name() == SceneMenuActions::DOWN)
         {
             if (m_selectedMenuIndex >= m_menuStrings.size() - 1)
             {
@@ -117,17 +117,17 @@ void Scene_Menu::sDoAction(const Action &action)
                 m_selectedMenuIndex++;
             }
         }
-        else if (action.name() == "PLAY")
+        else if (action.name() == SceneMenuActions::PLAY)
         {
-            // m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_selectedMenuIndex, m_game->getAssets().getFont("FontName")), true); // This is butchured fasho
-            m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex], m_game->getAssets().getFont("byteSized2")), true);
-            // m_game->changeScene("PLAY", std::make_shared<Scene_Play>(m_game, "Level 1", m_game->getAssets().getFont("byteSized2")), false);
+            // m_game->changeScene(SceneMenuActions::PLAY, std::make_shared<Scene_Play>(m_game, m_selectedMenuIndex, m_game->getAssets().getFont("FontName")), true); // This is butchured fasho
+            m_game->changeScene(SceneMenuActions::PLAY, std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex], m_game->getAssets().getFont("byteSized2")), true);
+            // m_game->changeScene(SceneMenuActions::PLAY, std::make_shared<Scene_Play>(m_game, "Level 1", m_game->getAssets().getFont("byteSized2")), false);
         }
-        else if (action.name() == "QUIT")
+        else if (action.name() == SceneMenuActions::QUIT)
         {
             onEnd();
         }
-        else if (action.name() == "TOGGLE_GRID")
+        else if (action.name() == SceneMenuActions::TOGGLE_GRID)
         {
             m_drawGrid = !m_drawGrid;
         }
@@ -153,11 +153,6 @@ void Scene_Menu::sRender()
     // draw all of the menu options
     for (size_t i = 0; i < m_menuStrings.size(); i++)
     {
-        // m_menuText.setString(m_menuStrings[i]);
-        // m_menuText.setFillColor(i == m_selectedMenuIndex ? sf::Color::Cyan : sf::Color::White);
-        // m_menuText.setPosition(sf::Vector2f(10, 110 + i * 72));
-        // m_game->window().draw(m_menuText);
-
         m_menuText.setString(m_menuStrings[i]);
         m_menuText.setFillColor(i == m_selectedMenuIndex ? sf::Color::Cyan : sf::Color::White);
         m_menuText.setPosition(sf::Vector2f(10, 110 + i * 72));
@@ -165,14 +160,11 @@ void Scene_Menu::sRender()
     }
 
     // draw the controls in the bottom-left
-    sf::Text controlsText(m_game->getAssets().getFont("byteSized2"), "up: w   down: s  play: d  back: esc  debug: L");
+    sf::Text controlsText(m_game->getAssets().getFont("byteSized2"), "up: w   down: s  play: d  back: esc");
     controlsText.setCharacterSize(20);
     controlsText.setFillColor(sf::Color::Black);
-    // controlsText.setPosition({});
+    controlsText.setPosition({0, static_cast<float>(m_game->window().getSize().y)});
     m_game->window().draw(controlsText);
-    // m_menuText.setCharacterSize(20);
-    // m_menuText.setFillColor(sf::Color::Black);
-    // m_menuText.setString("up: w   down: s  play: d  back: ");
 
     for (auto e : m_entityManager.getEntities())
     {
@@ -181,7 +173,7 @@ void Scene_Menu::sRender()
         if (e->hasComponent<CAnimation>())
         {
             auto &animation = e->getComponent<CAnimation>().animation;
-            animation.update(); // ???
+            animation.update(); // ??? OG class concempt didn't have any animations in menu scene
             auto tempVari = animation.getSprite();
             auto tempVari2 = animation.getSize();
             animation.getSprite().setRotation(sf::degrees(transform.angle));
@@ -214,28 +206,10 @@ void Scene_Menu::drawLine(const Vec2 &p1, const Vec2 &p2) const
 {
     sf::Vertex line[] = {{sf::Vector2f(p1.x, p1.y)}, {sf::Vector2f(p2.x, p2.y)}};
     m_game->window().draw(line, 2, sf::PrimitiveType::Lines);
-    // sf::Vertex line[] = {{sf::Vector2f(p1.x, p1.y)}, {sf::Vector2f(p2.x, p2.y)}};
-    // m_game->window().draw(line, 2, sf::Lines);
 }
 
 void Scene_Menu::drawGrid() const
 {
-    // draw lines start
-    // drawLine({350, 350},{650, 650});
-    // drawLine({351, 351},{651, 651});
-    // drawLine({352, 352},{652, 652});
-    // drawLine({265, 477},{53, 53});
-
-    // #### Grid = divide screen by 12ths
-    //     const int num_grid_blocks = 12; // Grid is divided into 1/<int> equal parts
-    // const sf::Vector2u window_size = m_game->window().getSize();
-    //     const float grid_blocks_horz_width = window_size.x / num_grid_blocks;
-    //     const float grid_blocks_vert_height = window_size.y / num_grid_blocks;
-    //      for (float i = 1; i < num_grid_blocks; i++) {
-    //         drawLine({i * grid_blocks_horz_width, 0}, {i * grid_blocks_horz_width, static_cast<float>(window_size.y)});
-    //         drawLine({0, i * grid_blocks_vert_height}, {static_cast<float>(window_size.x), i * grid_blocks_vert_height});
-    //     }
-
     const sf::Vector2u window_size = m_game->window().getSize();
     const int gridBlockSize = 64;
     const int maxGridLines = window_size.x > window_size.y ? window_size.x / gridBlockSize : window_size.y / gridBlockSize;
@@ -248,7 +222,6 @@ void Scene_Menu::drawGrid() const
 
         for (float j = 0; j < numVerticleLinePoints; j++)
         {
-
             std::ostringstream coordinateString;
             coordinateString << "( " << i << ", " << j << ")";
 
@@ -260,7 +233,3 @@ void Scene_Menu::drawGrid() const
         }
     }
 }
-
-// void Scene_Menu::registerAction(sf::Keyboard::Scancode inputKey, SceneMenuActions actionName) {
-//     m_actionMap[inputKey] = actionName;
-// }

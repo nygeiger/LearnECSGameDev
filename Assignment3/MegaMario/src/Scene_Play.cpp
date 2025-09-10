@@ -24,17 +24,17 @@ void Scene_Play::init(const std::string &levelPath)
     // registerAction(sf::Keyboard::Scancode::T, ScenePlayActions::TOGGLE_TEXTURE);
     // registerAction(sf::Keyboard::Scancode::C, ScenePlayActions::TOGGLE_COLLISION);
     // registerAction(sf::Keyboard::Scancode::G, ScenePlayActions::TOGGLE_GRID);
-    registerAction(sf::Keyboard::Scancode::P, "PAUSE");
-    registerAction(sf::Keyboard::Scancode::Escape, "TO_MAIN_MENU");
-    registerAction(sf::Keyboard::Scancode::T, "TOGGLE_TEXTURE");
-    registerAction(sf::Keyboard::Scancode::C, "TOGGLE_COLLISION");
-    registerAction(sf::Keyboard::Scancode::G, "TOGGLE_GRID");
+    registerAction(sf::Keyboard::Scancode::P, ScenePlayActions::PAUSE);
+    registerAction(sf::Keyboard::Scancode::Escape, ScenePlayActions::TO_MAIN_MENU);
+    registerAction(sf::Keyboard::Scancode::T, ScenePlayActions::TOGGLE_TEXTURE);
+    registerAction(sf::Keyboard::Scancode::C, ScenePlayActions::TOGGLE_COLLISION);
+    registerAction(sf::Keyboard::Scancode::G, ScenePlayActions::TOGGLE_GRID);
 
     // TODO: Register all other gameplay Actions
     // registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
-    registerAction(sf::Keyboard::Scancode::W, "UP");
-    registerAction(sf::Keyboard::Scancode::A, "LEFT");
-    registerAction(sf::Keyboard::Scancode::D, "RIGHT");
+    registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
+    registerAction(sf::Keyboard::Scancode::A, ScenePlayActions::LEFT);
+    registerAction(sf::Keyboard::Scancode::D, ScenePlayActions::RIGHT);
 
     m_gridText.setCharacterSize(12);
     // m_gridText.setFont(m_game->assets.getFont("Tech"));
@@ -101,7 +101,6 @@ void Scene_Play::loadLevel(const std::string &fileName)
             file >> animationName >> gx >> gy;
             const bool bp = true;
             auto tile = m_entityManager.addEntity(EntityType::TILE);
-            // tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BLOCK), false);
             tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), false);
             tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
 
@@ -231,18 +230,7 @@ void Scene_Play::sMovement()
     const float MaxSpeedInv = MaxSpeed * -1;
     const float runSpeed = 1.75;
 
-    // Vec2 playerVelocity(0,0);
     auto &playerInput = m_player->getComponent<CInput>();
-
-    // if (playerInput.left)
-    // {
-    //     m_player->getComponent<CTransform>().pos.x -= 3;
-    // }
-
-    // if (playerInput.right)
-    // {
-    //     m_player->getComponent<CTransform>().pos.x += 3;
-    // }
 
     if (playerInput.left)
     {
@@ -257,19 +245,16 @@ void Scene_Play::sMovement()
         m_player->getComponent<CTransform>().velocity.x = 0;
     }
 
-    // Vec2 playerVelocity(0, m_player->getComponent<CTransform>().velocity.y);
     Vec2 playerVelocity(m_player->getComponent<CTransform>().velocity.x, m_player->getComponent<CTransform>().velocity.y);
     if (playerInput.canJump && playerInput.up)
     {
-        playerVelocity.y = -10;
-        // m_player->getComponent<CTransform>().velocity.y -= 10; // Delete "playerVelocity" Vec2 and just do this?
-        // auto &playerInput = m_player->getComponent<CInput>().canJump = false;
+        m_player->getComponent<CTransform>().velocity.y -= 30; // Delete "playerVelocity" Vec2 and just do this?
+        auto &playerInput = m_player->getComponent<CInput>().canJump = false;
         m_player->addComponent<CState>(PlayerStates::JUMP);
-        // m_player->addComponent<CState>("jumping");
         m_player->addComponent<CGravity>(1);
     }
 
-    m_player->getComponent<CTransform>().velocity = playerVelocity;
+    // m_player->getComponent<CTransform>().velocity = playerVelocity;
 
     for (auto e : m_entityManager.getEntities())
     {
@@ -375,6 +360,7 @@ void Scene_Play::sCollision()
                         else
                         {
                             m_player->getComponent<CTransform>().velocity.y = 0;
+                            m_player->getComponent<CInput>().canJump = true;
                             // m_player->removeComponent<CGravity>();
                         }
                     }
@@ -438,28 +424,6 @@ void Scene_Play::sCollision()
                 {
                     const Vec2 previousOvelap = Physics::GetPreviousOverlap(tileEnt, m_player);
 
-                    // if (overlapVec.x > overlapVec.y)
-                    // {
-                    //     if (playerCameFromBottom)
-                    //     {
-                    //         tileEnt->destroy();
-                    //         m_player->getComponent<CTransform>().velocity.y = 0;
-                    //         m_player->getComponent<CTransform>().pos.y += overlapVec.y;
-                    //     }
-                    //     else
-                    //     {
-                    //         m_player->getComponent<CTransform>().velocity.y = 0;
-                    //         m_player->getComponent<CTransform>().pos.y -= overlapVec.y;
-                    //         // m_player->removeComponent<CGravity>();
-                    //     }
-
-                    //     // m_player->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapVec.y : -overlapVec.y;
-                    // }
-                    // else if (overlapVec.y > overlapVec.x)
-                    // {
-                    //     m_player->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
-                    // }
-
                     if (prevOverlapVec.y <= 0 && prevOverlapVec.x > 0)
                     {
                         if (playerCameFromBottom)
@@ -472,7 +436,7 @@ void Scene_Play::sCollision()
                         {
                             m_player->getComponent<CTransform>().velocity.y = 0;
                             m_player->getComponent<CTransform>().pos.y -= overlapVec.y;
-                            // m_player->removeComponent<CGravity>();
+                            m_player->getComponent<CInput>().canJump = true;
                         }
                     }
                     else if (prevOverlapVec.x <= 0 && prevOverlapVec.y > 0)
@@ -487,7 +451,6 @@ void Scene_Play::sCollision()
                     {
                         createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, m_player, overlapVec);
                     }
-                    // default = player came from bottom so destroy the block
                 }
             }
         }
@@ -503,45 +466,43 @@ void Scene_Play::sDoAction(const Action &action)
     if (action.type() == ActionType::START)
     {
 
-        if (action.name() == "PAUSE")
+        if (action.name() == ScenePlayActions::PAUSE)
         {
             setPaused(!m_paused);
         }
-        else if (action.name() == "Quit")
+        else if (action.name() == ScenePlayActions::TO_MAIN_MENU)
         {
             onEnd();
         }
-        else if (action.name() == "TOGGLE_TEXTURE")
+        else if (action.name() == ScenePlayActions::TOGGLE_TEXTURE)
         {
             m_drawTextures = !m_drawTextures;
         }
-        else if (action.name() == "TOGGLE_COLLISION")
+        else if (action.name() == ScenePlayActions::TOGGLE_COLLISION)
         {
             m_drawCollision = !m_drawCollision;
         }
-        else if (action.name() == "TOGGLE_GRID")
+        else if (action.name() == ScenePlayActions::TOGGLE_GRID)
         {
             m_drawGrid = !m_drawGrid;
         }
-        else if (action.name() == "UP")
+        else if (action.name() == ScenePlayActions::UP)
         {
             m_player->getComponent<CInput>().up = true;
-            // m_player->addComponent<CState>().state = PlayerStates::JUMP; //TODO: Let Movement system handle this
         }
-        else if (action.name() == "LEFT")
+        else if (action.name() == ScenePlayActions::LEFT)
         {
             m_player->getComponent<CInput>().right = false;
             m_player->getComponent<CInput>().left = true;
             m_player->getComponent<CState>().state = PlayerStates::RUN;
-            // m_player->getComponent<CState>().state = "RUN";
         }
-        else if (action.name() == "RIGHT")
+        else if (action.name() == ScenePlayActions::RIGHT)
         {
             m_player->getComponent<CInput>().left = false;
             m_player->getComponent<CInput>().right = true;
             m_player->getComponent<CState>().state = PlayerStates::RUN;
         }
-        else if (action.name() == "TO_MAIN_MENU")
+        else if (action.name() == ScenePlayActions::TO_MAIN_MENU)
         {
             m_game->changeScene();
         }
@@ -549,15 +510,15 @@ void Scene_Play::sDoAction(const Action &action)
     else if (action.type() == ActionType::END)
     {
 
-        if (action.name() == "UP")
+        if (action.name() == ScenePlayActions::UP)
         {
             m_player->getComponent<CInput>().up = false;
         }
-        else if (action.name() == "LEFT")
+        else if (action.name() == ScenePlayActions::LEFT)
         {
             m_player->getComponent<CInput>().left = false;
         }
-        else if (action.name() == "RIGHT")
+        else if (action.name() == ScenePlayActions::RIGHT)
         {
             m_player->getComponent<CInput>().right = false;
         }
@@ -784,10 +745,10 @@ void Scene_Play::drawGrid() const
 
 std::shared_ptr<Entity> Scene_Play::player()
 {
-    auto &players = m_entityManager.getEntities("player");
+    auto &players = m_entityManager.getEntities(EntityType::PLAYER);
     if (players.empty())
     {
-        return m_entityManager.addEntity("player");
+        return m_entityManager.addEntity(EntityType::PLAYER);
     }
     return players.at(0);
 }

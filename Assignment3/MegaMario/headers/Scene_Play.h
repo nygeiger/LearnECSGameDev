@@ -9,7 +9,6 @@
 #include <memory>
 #include <map>
 
-// enum ScenePlayActions {PAUSE, QUIT, TOGGLE_TEXTURE, TOGGLE_COLLISION, TOGGLE_GRID, UP};
 
 class Scene_Play : public Scene {
 
@@ -62,6 +61,28 @@ class Scene_Play : public Scene {
         Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
         // Systems
         void update();
+};
+
+/// TODO: Examine namespaces and idenfiy which can be enumerated
+namespace ScenePlayActions {
+
+    // Genearal Actions
+    static const std::string PAUSE = "PAUSE";
+    static const std::string TO_MAIN_MENU = "TO_MAIN_MENU";
+    static const std::string TOGGLE_TEXTURE ="TOGGLE_TEXTURE";
+    static const std::string TOGGLE_COLLISION ="TOGGLE_COLLISION";
+    static const std::string TOGGLE_GRID = "TOGGLE_GRID";
+
+    //Gameplay Actions
+    static const std::string UP ="UP";
+    static const std::string LEFT ="LEFT";
+    static const std::string RIGHT = "RIGHT";
+};
+
+namespace PlayerStates {
+    static const std::string STAND = "Stand";
+    static const std::string JUMP = "Jump";
+    static const std::string RUN = "Run";
 };
 
 #endif

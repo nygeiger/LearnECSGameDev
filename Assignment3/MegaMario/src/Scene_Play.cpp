@@ -226,9 +226,11 @@ void Scene_Play::sMovement()
     // TODO: Implement the maximum player speed in both x and y directions
     // NOTE: Setting an entity's scale.x to -1/1 will make it face to the left/right
 
-    const float MaxSpeed = 7.0f;
-    const float MaxSpeedInv = MaxSpeed * -1;
-    const float runSpeed = 1.75;
+    const float xMaxSpeed = 7.0f;
+    const float xMaxSpeedInv = xMaxSpeed * -1;
+    const float yMaxSpeed = 25.0f;
+    const float yMaxSpeedInv = yMaxSpeed * -1;
+    const float runSpeed = 4.75;
 
     auto &playerInput = m_player->getComponent<CInput>();
 
@@ -248,7 +250,7 @@ void Scene_Play::sMovement()
     Vec2 playerVelocity(m_player->getComponent<CTransform>().velocity.x, m_player->getComponent<CTransform>().velocity.y);
     if (playerInput.canJump && playerInput.up)
     {
-        m_player->getComponent<CTransform>().velocity.y -= 30; // Delete "playerVelocity" Vec2 and just do this?
+        m_player->getComponent<CTransform>().velocity.y -= 17; // Delete "playerVelocity" Vec2 and just do this?
         auto &playerInput = m_player->getComponent<CInput>().canJump = false;
         m_player->addComponent<CState>(PlayerStates::JUMP);
         m_player->addComponent<CGravity>(1);
@@ -264,21 +266,21 @@ void Scene_Play::sMovement()
             // if player is moving faster than max speed in any direction
             // set the speed of the player to the max
 
-            if (e->getComponent<CTransform>().velocity.y > MaxSpeed)
+            if (e->getComponent<CTransform>().velocity.y > yMaxSpeed)
             {
-                e->getComponent<CTransform>().velocity.y = MaxSpeed;
+                e->getComponent<CTransform>().velocity.y = yMaxSpeed;
             }
-            if (e->getComponent<CTransform>().velocity.x > MaxSpeed)
+            if (e->getComponent<CTransform>().velocity.x > xMaxSpeed)
             {
-                e->getComponent<CTransform>().velocity.x = MaxSpeed;
+                e->getComponent<CTransform>().velocity.x = xMaxSpeed;
             }
-            if (e->getComponent<CTransform>().velocity.y < MaxSpeedInv)
+            if (e->getComponent<CTransform>().velocity.y < yMaxSpeedInv)
             {
-                e->getComponent<CTransform>().velocity.y = MaxSpeedInv;
+                e->getComponent<CTransform>().velocity.y = yMaxSpeedInv;
             }
-            if (e->getComponent<CTransform>().velocity.x < MaxSpeedInv)
+            if (e->getComponent<CTransform>().velocity.x < xMaxSpeedInv)
             {
-                e->getComponent<CTransform>().velocity.x = MaxSpeedInv;
+                e->getComponent<CTransform>().velocity.x = xMaxSpeedInv;
             }
 
             // reset down velocity to 0 when touching the ground
@@ -368,47 +370,10 @@ void Scene_Play::sCollision()
                     {
                         m_player->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
                         // m_player->getComponent<CTransform>().pos.x += (m_player->getComponent<CTransform>().velocity.x < 0) ? overlapVec.x : -overlapVec.x;
-                    } else { // // Only when prevOv of x & y are <= 0; So "corner collision" ??
-
                     }
-
-                    // const auto tempXCollisThreshold = m_player->getComponent<CBoundingBox>().size.x / 100;
-                    // if (overlapVec.x > overlapVec.y) // Entities collided via y-axis i.e. Megaman landing on a block
-                    // {
-                    //     m_player->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapVec.y : -overlapVec.y;
-                    //     if (playerCameFromBottom)
-                    //     {
-                    //         m_player->getComponent<CTransform>().velocity.y = 0;
-                    //     }
-                    //     else
-                    //     {
-                    //         m_player->getComponent<CTransform>().velocity.y = 0;
-                    //         // m_player->removeComponent<CGravity>();
-                    //     }
-                    // }
-                    // else if (overlapVec.y > overlapVec.x && (overlapVec.x - m_player->getComponent<CBoundingBox>().size.x > 5)) // Entities collided via x-axis i.e. Megaman running into pipe
-                    // {
-                    //     m_player->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
-                    //     // m_player->getComponent<CTransform>().pos.x += (m_player->getComponent<CTransform>().velocity.x < 0) ? overlapVec.x : -overlapVec.x;
-                    // }
-                    /**
-                     * ##### Attempts to detect and handle "Corner Collision" cases #####
-                     */
-                    // else if ((overlapVec.x < m_player->getComponent<CBoundingBox>().size.x && overlapVec.y < m_player->getComponent<CBoundingBox>().size.y) || (overlapVec.x < tileEnt->getComponent<CBoundingBox>().size.x && overlapVec.y < tileEnt->getComponent<CBoundingBox>().size.y)) {
-                    //     const auto bp2 = true;
-                    // }
-                    // else
-                    // {
-                    //     const bool bp = true;
-                    //     if (prevOverlapVec.y <= 0)
-                    //     {
-                    //         m_player->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapVec.y : -overlapVec.y;
-                    //     }
-                    //     else if (prevOverlapVec.x <= 0)
-                    //     {
-                    //         m_player->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
-                    //     }
-                    // }
+                    else
+                    { // // Only when prevOv of x & y are <= 0; So "corner collision" ??
+                    }
 
                     if (m_game->debug())
                     {
@@ -638,15 +603,13 @@ void Scene_Play::sRender()
         m_game->window().clear(sf::Color(50, 50, 150));
     }
 
-    // // set the viewport of the window to be centered on the play
-    // auto &pPos = player()->getComponent<CTransform>().pos;
-    // // float windowCenterX = std::max(m_game->window().getSize().x /);
-    // float windowCenterX = std::max((int)m_game->window().getSize().x / 2, 90);
+    // set the viewport of the window to be centered on the play
+    auto &pPos = player()->getComponent<CTransform>().pos;
+    // float windowCenterX = std::max(m_game->window().getSize().x /);
 
-    // sf::View view = m_game->window().getView();
-    // // view.setCenter(windowCenterX, m_game.window().getSize().y - );
-    // view.setCenter({windowCenterX, static_cast<float>(m_game->window().getSize().y)});
-    // m_game->window().setView(view);
+    sf::View view = m_game->window().getView();
+    view.setCenter({pPos.x, pPos.y - (m_gridSize.y * 3)});
+    m_game->window().setView(view);
 
     // draw all Entity textures / animations
     if (m_drawTextures)
@@ -693,15 +656,29 @@ void Scene_Play::sRender()
 
     if (m_drawGrid)
     {
+        auto tempVari4 = view.getCenter();
+        sf::CircleShape circ(10);
+        circ.setPosition(view.getCenter());
+        circ.setOutlineColor(sf::Color::Red);
+        m_game->window().draw(circ);
+
+        sf::Text gridOnText(m_game->getAssets().getFont("byteSized2"), "GRID ON");
+        gridOnText.setCharacterSize(20);
+        gridOnText.setFillColor(sf::Color::White);
+        gridOnText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x/2 + m_gridSize.x), view.getCenter().y - view.getSize().y/2 + m_gridSize.y});
+        m_game->window().draw(gridOnText);
+        // drawGrid();
         drawGrid();
     }
 
     if (m_game->debug())
     {
+        auto tempVari = view.getViewport();
+        
         sf::Text debugText(m_game->getAssets().getFont("byteSized2"), "IN DEBUG MODE");
         debugText.setCharacterSize(20);
         debugText.setFillColor(sf::Color::White);
-        debugText.setPosition({static_cast<float>(m_game->window().getSize().x / 2), 32});
+        debugText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x/2 + m_gridSize.x), view.getCenter().y - view.getSize().y/2 + m_gridSize.y*2});
         m_game->window().draw(debugText);
     }
 
@@ -714,31 +691,45 @@ void Scene_Play::drawLine(const Vec2 &p1, const Vec2 &p2) const
     m_game->window().draw(line, 2, sf::PrimitiveType::Lines);
 }
 
+// Two ways to make it work:
+// - Display grid for entire window (so the lines will be completely independent from the view)
+// - Display rid for only new what the view sees (The grid "moves" with the view.)
 void Scene_Play::drawGrid() const
 { /// Significanly drops framerate. Mostlikely need to look at ways to minimize calls to sfml window.draw()
+    const sf::Vector2f view_size = m_game->window().getView().getSize();
+    sf::Vector2f viewCenter = m_game->window().getView().getCenter();
+    const sf::Font coordStringFont = m_gridText.getFont();
+    std::ostringstream coordinateString;
 
-    const sf::Vector2u window_size = m_game->window().getSize();
-    const int gridBlockSize = 64;
-    const int maxGridLines = window_size.x > window_size.y ? window_size.x / gridBlockSize : window_size.y / gridBlockSize;
-    const int numVerticleLinePoints = window_size.x / gridBlockSize;
-    const sf::Font coordStringFont = m_gridText.getFont(); // Heavily reduced lag. Current Temporary fix
+    const int viewYDimensionStart = viewCenter.y - view_size.y / 2;
+    const float viewToGridYStartOffset = viewYDimensionStart % static_cast<int>(m_gridSize.y);
+    const float gridYStartPoint = (viewYDimensionStart - viewToGridYStartOffset);
 
-    for (float i = 1; i < maxGridLines; i++)
+    const int viewXDimensionStart = viewCenter.x - view_size.x / 2;
+    const float tempViewToGridYStartOffset = viewXDimensionStart % static_cast<int>(m_gridSize.x);
+    const float gridXStartPoint = (viewXDimensionStart - tempViewToGridYStartOffset);
+
+    const int viewYDimensionEnd = std::abs(viewCenter.y + view_size.y / 2);
+    const float viewToGridYOffsetEnd = viewYDimensionEnd % static_cast<int>(m_gridSize.y);
+    const float gridYEndPoint = (viewYDimensionEnd - viewToGridYOffsetEnd);
+
+    const int viewXDimensionEnd = std::abs(viewCenter.x + view_size.x / 2);
+    const float viewToGridXOffsetEnd = viewXDimensionEnd % static_cast<int>(m_gridSize.x);
+    const float gridXEndPoint = (viewXDimensionEnd - viewToGridXOffsetEnd);
+
+    for (float x = gridXStartPoint, y = gridYStartPoint; x <= gridXEndPoint || y <= gridYEndPoint; x += m_gridSize.x, y += m_gridSize.y)
     {
-        drawLine({i * gridBlockSize, 0}, {i * 64, static_cast<float>(window_size.y)});
-        drawLine({0, i * gridBlockSize}, {static_cast<float>(window_size.x), i * gridBlockSize});
+        drawLine({x, viewCenter.y - view_size.y}, {x, viewCenter.y + view_size.y}); // Vertical Lines
+        drawLine({viewCenter.x - view_size.x, y}, {viewCenter.x + view_size.x, y}); // Horizontal lines
 
-        for (float j = 0; j < numVerticleLinePoints; j++)
+        for (float j = gridYStartPoint; j <= gridYEndPoint; j += m_gridSize.y)
         {
-
-            std::ostringstream coordinateString;
-            coordinateString << "( " << i << ", " << j << ")";
-
-            // const sf::Font coordStringFont = m_gridText.getFont();
+            // Iterate through each verticle line, and place coordinate at every gridSize worth of distance (This will be where lines intersect)
+            coordinateString << "(" << static_cast<int>(x / m_gridSize.y) << "," << static_cast<int>(j / m_gridSize.y) << ")";
             sf::Text coordinateText(coordStringFont, coordinateString.str(), 10);
-
-            coordinateText.setPosition({i * gridBlockSize, j * gridBlockSize});
+            coordinateText.setPosition({x, j});
             m_game->window().draw(coordinateText);
+            coordinateString.str("");
         }
     }
 }

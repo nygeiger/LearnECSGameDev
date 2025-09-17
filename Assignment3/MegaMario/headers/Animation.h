@@ -29,18 +29,17 @@ Animation N T F S X Y Cols Rows
 */
 class Animation {
     // sf::Sprite  m_sprite;
-    size_t      m_frameCount = 0;       // total number of frames of anmation               // what about still "animations"
-    size_t      m_currentFrame = 0;     // the current frame of animation being played      // what about still "animations"
+    size_t      m_frameCount = 0;       // total number of frames of anmation     
+    size_t      m_currentFrame = 0;     // the current frame of animation being played
     size_t      m_initialFrameXPos = 0; // Imagine a matrix of sprites. Which column the sprite is in
     size_t      m_initialFrameYPos = 0; // Imagine a matrix of sprites. Which row the sprite is in
     int         m_TextCols, m_TextRows = -1;
     bool        m_onSpriteMap = false;
     size_t      m_speed = 0;            // the speed to play this animation
     Vec2        m_size = {1, 1};        // size of the animation frame
-    // std::string m_name = "none";
+    std::string m_name = "none";
 
     public:
-        std::string m_name = "none"; // moved to public so that there can be a default constructor
         sf::Sprite  m_sprite; // moved to public so that there can be a default constructor
         Animation();
         Animation(const std::string& name, const sf::Texture& t);

@@ -7,8 +7,6 @@
 
 #include <SFML/Graphics.hpp>
 
-
-
 class Component {
     public:
         bool has = false;
@@ -29,19 +27,6 @@ class CTransform : public Component {
     CTransform(const Vec2 & p, const Vec2 scale, const Vec2 & v, float a) : pos(p), scale(scale), velocity(v), angle(a) {};
 };
 
-// class CLifespan : public Component {
-//     // public:
-//         // int remaining = 0;
-//         // int total = 0;
-
-//         // CLifespan(int total) : total(total), remaining(total) {}
-//     public:
-//         int lifespan = 0;
-//         int frameCreated = 0;
-//         // CLifeSpan() = default;
-//         CLifespan(int duration, int frame) : lifespan(duration), frameCreated(frame){}
-// };
-
 class CLifespan : public Component {
     public :
         int lifespan = 0;
@@ -56,12 +41,7 @@ class CInput : public Component {
         bool down = false;
         bool left = false;
         bool right = false;
-        // bool w = false;
-        // bool s = false;
-        // bool a = false;
-        // bool d = false;
         bool shoot = false;
-        // bool special = false;
         bool canShoot = true;
         bool canJump = true;
 

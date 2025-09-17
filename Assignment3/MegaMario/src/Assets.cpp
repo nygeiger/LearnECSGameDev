@@ -1,4 +1,3 @@
-// #include "../headers/Assets.h"
 #include "headers/Assets.h"
 
 #include <cassert>
@@ -32,11 +31,6 @@ void Assets::addAnimation(const std::string &animationName, std::string &texture
 
 void Assets::addFont(const std::string &fontName, const std::string &path)
 {
-    // const std::ifstream file("../assets/fonts/gamtex/Gamtex.ttf");
-    // const bool tempVari = file.good();
-    // const bool tempVari2 = file.bad();
-    // const bool tempVari3 = file.eof();
-    // const bool tempVari4 = file.fail();
     m_fontMap[fontName] = sf::Font();
     if (!m_fontMap[fontName].openFromFile(path))
     {
@@ -83,7 +77,8 @@ void Assets::loadFromFile(const std::string &path)
             file >> name >> path;
             addFont(name, path);
         }
-        else if (str.length() == 0 || str.find("/") != -1 || str.find("-") != -1 || str.find("*") != -1) { // instead use que to detect multi line comments??
+        else if (str.length() == 0 || str.find("/") != -1 || str.find("-") != -1 || str.find("*") != -1)
+        { // instead use que to detect multi line comments??
             std::string tempLine;
             std::getline(file, tempLine);
             const bool bp = false;

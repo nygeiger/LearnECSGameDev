@@ -2,7 +2,6 @@
 #define SCENE_PLAY_H
 
 #include "Scene.h"
-// #include "Vec2.h"
 #include "EntityManager.h"
 
 
@@ -26,22 +25,15 @@ class Scene_Play : public Scene {
     const Vec2              m_gridSize = {64, 64}; // TODO: All scenes should have this?
     sf::Text                m_gridText;
 
-    // Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
-
     void init();
     void init(const std::string& levelPath);
-
     void loadLevel(const std::string& filename);
-
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);
-    // EntityManager m_entityManager;
     void onEnd();
     void drawLine(const Vec2& p1, const Vec2& p2) const;
     void drawGrid() const;
-    // void Scene_Play::registerAction(sf::Keyboard::Scancode inputKey, ScenePlayActions actionName);
     std::shared_ptr<Entity> player();
-
 
     //Systems
     void sAnimation();
@@ -49,7 +41,6 @@ class Scene_Play : public Scene {
     void sEnemySpawner();
     void sCollision();
     void sRender();
-    // void sDoAction(std::string action);
     void sDoAction(const Action& action);
     void sDebug();
     void sLifespan();
@@ -59,7 +50,6 @@ class Scene_Play : public Scene {
 
     public:
         Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
-        // Systems
         void update();
 };
 

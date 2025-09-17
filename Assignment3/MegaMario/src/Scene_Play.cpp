@@ -1,10 +1,10 @@
-#include "../headers/Scene_Play.h"
-#include "../headers/Physics.h"
-#include "../headers/Assets.h"
-#include "../headers/GameEngine.h"
-#include "../headers/Components.h"
-#include "../headers/Action.h"
-#include "./Util.cpp"
+#include "headers/Scene_Play.h"
+#include "headers/Physics.h"
+#include "headers/Assets.h"
+#include "headers/GameEngine.h"
+#include "headers/Components.h"
+#include "headers/Action.h"
+#include "Util.cpp"
 
 #include <iostream>
 #include <sstream>
@@ -19,11 +19,6 @@ Scene_Play::Scene_Play(GameEngine *gameEngine, const std::string &levelPath, con
 
 void Scene_Play::init(const std::string &levelPath)
 {
-    // registerAction(sf::Keyboard::Scancode::P, ScenePlayActions::PAUSE);
-    // registerAction(sf::Keyboard::Scancode::Escape, ScenePlayActions::QUIT);
-    // registerAction(sf::Keyboard::Scancode::T, ScenePlayActions::TOGGLE_TEXTURE);
-    // registerAction(sf::Keyboard::Scancode::C, ScenePlayActions::TOGGLE_COLLISION);
-    // registerAction(sf::Keyboard::Scancode::G, ScenePlayActions::TOGGLE_GRID);
     registerAction(sf::Keyboard::Scancode::P, ScenePlayActions::PAUSE);
     registerAction(sf::Keyboard::Scancode::Escape, ScenePlayActions::TO_MAIN_MENU);
     registerAction(sf::Keyboard::Scancode::T, ScenePlayActions::TOGGLE_TEXTURE);
@@ -31,37 +26,14 @@ void Scene_Play::init(const std::string &levelPath)
     registerAction(sf::Keyboard::Scancode::G, ScenePlayActions::TOGGLE_GRID);
 
     // TODO: Register all other gameplay Actions
-    // registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
     registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
     registerAction(sf::Keyboard::Scancode::A, ScenePlayActions::LEFT);
     registerAction(sf::Keyboard::Scancode::D, ScenePlayActions::RIGHT);
 
     m_gridText.setCharacterSize(12);
-    // m_gridText.setFont(m_game->assets.getFont("Tech"));
-    // m_gridText.setFont(m_game->m_assets.getFont("Tech"));
-
+    
     loadLevel(levelPath);
 }
-
-// void readLevelFromFile(const std::string& fileName) {
-//  std::ifstream file(fileName);
-//     std::string lineHeader;
-//     if (file.bad()) {std::cerr << "FAILED to load level file: " << fileName << std::endl;}
-
-//     while (file.good())
-//     {
-//         file >> lineHeader;
-
-//         if (lineHeader == "Tile") {
-//             std::string animationName;
-//             /*size_t*/ int gx, gy;
-//             file >> animationName >> gx >> gy;
-//             const bool bp = true;
-
-//             auto tile =
-//         }
-//     }
-// }
 
 Vec2 Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity)
 {
@@ -247,7 +219,6 @@ void Scene_Play::sMovement()
         m_player->getComponent<CTransform>().velocity.x = 0;
     }
 
-    Vec2 playerVelocity(m_player->getComponent<CTransform>().velocity.x, m_player->getComponent<CTransform>().velocity.y);
     if (playerInput.canJump && playerInput.up)
     {
         m_player->getComponent<CTransform>().velocity.y -= 17; // Delete "playerVelocity" Vec2 and just do this?
@@ -255,8 +226,6 @@ void Scene_Play::sMovement()
         m_player->addComponent<CState>(PlayerStates::JUMP);
         m_player->addComponent<CGravity>(1);
     }
-
-    // m_player->getComponent<CTransform>().velocity = playerVelocity;
 
     for (auto e : m_entityManager.getEntities())
     {
@@ -282,8 +251,6 @@ void Scene_Play::sMovement()
             {
                 e->getComponent<CTransform>().velocity.x = xMaxSpeedInv;
             }
-
-            // reset down velocity to 0 when touching the ground
         }
         e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
         e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
@@ -300,18 +267,8 @@ void Scene_Play::sLifespan()
  */
 void createCollisionAreaEntity(EntityManager &entityManager, const bool &playerCameFromRight, const bool &playerCameFromBottom, std::shared_ptr<Entity> movingEnt, const Vec2 &overlapVec)
 {
-    // auto collisionVisualEnt = m_entityManager.addEntity(EntityType::COLLISION_VISUAL);
-    // // tempEnt->addComponent<CTransform>(tileEnt->getComponent<CTransform>().pos);
-    // const float collVisXPoint = (playerCameFromRight) ? m_player->getComponent<CTransform>().pos.x - m_player->getComponent<CBoundingBox>().halfsize.x : m_player->getComponent<CTransform>().pos.x + m_player->getComponent<CBoundingBox>().halfsize.x;
-    // const float collVisYPoint = (playerCameFromBottom) ? m_player->getComponent<CTransform>().pos.y - m_player->getComponent<CBoundingBox>().halfsize.y : m_player->getComponent<CTransform>().pos.y + m_player->getComponent<CBoundingBox>().halfsize.y;
-
-    //     collisionVisualEnt->addComponent<CTransform>(Vec2(collVisXPoint, collVisYPoint));
-    //     collisionVisualEnt->addComponent<CBoundingBox>(overlapVec);
-
     auto collisionVisualEnt = entityManager.addEntity(EntityType::COLLISION_VISUAL);
-    // tempEnt->addComponent<CTransform>(tileEnt->getComponent<CTransform>().pos);
     const float collVisXPoint = (playerCameFromRight) ? movingEnt->getComponent<CTransform>().pos.x - movingEnt->getComponent<CBoundingBox>().halfsize.x : movingEnt->getComponent<CTransform>().pos.x + movingEnt->getComponent<CBoundingBox>().halfsize.x;
-    // const float collVisXPoint = (playerCameFromRight) ? movingEnt->getComponent<CTransform>().pos.x - movingEnt->getComponent<CBoundingBox>().halfsize.x : (movingEnt->getComponent<CTransform>().pos.x == movingEnt->getComponent<CTransform>().prevPos.x) ? movingEnt->getComponent<CTransform>().pos.x : movingEnt->getComponent<CTransform>().pos.x + movingEnt->getComponent<CBoundingBox>().halfsize.x;
     const float collVisYPoint = (playerCameFromBottom) ? movingEnt->getComponent<CTransform>().pos.y - movingEnt->getComponent<CBoundingBox>().halfsize.y : movingEnt->getComponent<CTransform>().pos.y + movingEnt->getComponent<CBoundingBox>().halfsize.y;
     collisionVisualEnt->addComponent<CTransform>(Vec2(collVisXPoint, collVisYPoint));
     collisionVisualEnt->addComponent<CBoundingBox>(overlapVec);
@@ -545,8 +502,6 @@ void Scene_Play::onEnd()
 {
     // TODO: When the scene ends, change back to the MENU scene
     //          use m_game.changeScene(correct params);
-    // m_game->changeScene("playScene", std::make_shared<Scene_Menu>(m_game, sf::Font()), true);
-    // m_game->changeScene("scene_play", std::make_shared<Scene_Menu>(sf::Font()));
     m_game->changeScene();
 }
 
@@ -665,7 +620,7 @@ void Scene_Play::sRender()
         sf::Text gridOnText(m_game->getAssets().getFont("byteSized2"), "GRID ON");
         gridOnText.setCharacterSize(20);
         gridOnText.setFillColor(sf::Color::White);
-        gridOnText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x/2 + m_gridSize.x), view.getCenter().y - view.getSize().y/2 + m_gridSize.y});
+        gridOnText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y});
         m_game->window().draw(gridOnText);
         // drawGrid();
         drawGrid();
@@ -674,11 +629,11 @@ void Scene_Play::sRender()
     if (m_game->debug())
     {
         auto tempVari = view.getViewport();
-        
+
         sf::Text debugText(m_game->getAssets().getFont("byteSized2"), "IN DEBUG MODE");
         debugText.setCharacterSize(20);
         debugText.setFillColor(sf::Color::White);
-        debugText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x/2 + m_gridSize.x), view.getCenter().y - view.getSize().y/2 + m_gridSize.y*2});
+        debugText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y * 2});
         m_game->window().draw(debugText);
     }
 

@@ -9,8 +9,6 @@
 class EntityManager;
 
 typedef std::tuple<CTransform, CLifespan, CInput, CBoundingBox, CGravity, CState, CAnimation> ComponentTuple;
-// using ComponentTuple =  std::tuple<std::string, CTransform, CLifespan, CInput, CBoundingBox, /*CAnimation,*/ CGravity, CState>;
-// std::get<CTransform>(ComponentTuple); <- to get the CTransform stored in this Tuple
 
 class Entity
 {
@@ -44,59 +42,27 @@ public:
     const size_t id() const;
     void destroy();
 
-    // template <typename T>
-    // bool hasComponent() const
-    // {
-    //     return getComponent<const T>().has;
-    // }
     template <typename T>
     bool hasComponent()
     {
         return getComponent<T>().has;
     }
 
-
-    // template <typename T, typename... TArgs>
-    // T& addComponent(TArgs&&... mArgs) {
-    //     auto& component = getComponent<T>();
-    //     // component = T(std::forwared<TArgs>(mArgs)...);
-    //     component = T(std::forward<TArgs>(mArgs)...);
-    //     component.has = true;
-    //     return component;
-    // }
     template <typename T, typename... TArgs>
     T& addComponent(TArgs &&...mArgs)
     {
         auto& component = getComponent<T>();
-        // component = T(std::forwared<TArgs>(mArgs)...);
         component = T(std::forward<TArgs>(mArgs)...);
         component.has = true;
         return component;
     }
 
-    // template<typename T>
-    // T& getComponent() const{
-    //     return std::get<const T>(m_components);
-    // }
-    // template <typename T>
-    // const T& getComponent() const
-    // {
-    //     return std::as_const(std::get<T>(m_components));
-    // }
-    // template<typename T>
-    // T& getComponent() const{
-    //     return std::get<const T>(m_components);
-    // }
     template <typename T>
     T& getComponent()
     {
         return std::get<T>(m_components);
     }
 
-    // template<typename T>
-    // void removeComponent() {
-    //     getComponent<const T>() = T();
-    // }
     template <typename T>
     void removeComponent()
     {

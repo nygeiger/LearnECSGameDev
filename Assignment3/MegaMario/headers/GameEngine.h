@@ -32,8 +32,8 @@ class GameEngine {
         void run();
         void quit();
 
-        void changeScene(Scene &scene); // TODO: Find wich one is correct
-        void changeScene(); // TODO: Find wich one is correct
+        void changeScene(Scene &scene);
+        void changeScene();
 
         const Assets &getAssets();
         sf::RenderWindow &window();

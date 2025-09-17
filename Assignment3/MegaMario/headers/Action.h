@@ -6,10 +6,7 @@
 enum ActionType {START, END, NONE}; // Use this instead of string? Does this go here or utli file (probably here)
 
 class Action {
-
-
     std::string m_name = "NONE";
-    // std::string m_type = "NONE";
     ActionType m_type = ActionType::NONE;
 
     public:

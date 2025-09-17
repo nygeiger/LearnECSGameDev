@@ -1,6 +1,6 @@
 #include <math.h>
 
-#include "../headers/Vec2.h"
+#include "headers/Vec2.h"
 
 Vec2::Vec2(){};
 

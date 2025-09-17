@@ -1,16 +1,13 @@
-#include "../headers/Scene_Menu.h"
-#include "../headers/Scene_Play.h"
-#include "../headers/Assets.h"
-#include "../headers/GameEngine.h"
-#include "../headers/Components.h"
-#include "../headers/Action.h"
-#include "./Util.cpp"
+#include "headers/Scene_Menu.h"
+#include "headers/Scene_Play.h"
+#include "headers/Assets.h"
+#include "headers/GameEngine.h"
+#include "headers/Components.h"
+#include "headers/Action.h"
+#include "Util.cpp"
 
 #include <sstream>
 
-// Scene_Menu::Scene_Menu(GameEngine& gameEngine) : Scene(gameEngine)  {
-//     init();
-// },,,,,,,,,,,
 Scene_Menu::Scene_Menu(const sf::Font &font, GameEngine *gameEngine) : m_menuText(sf::Text(font)), Scene(gameEngine)
 {
     init();
@@ -22,10 +19,6 @@ Scene_Menu::Scene_Menu(const Scene_Menu &obj) : m_menuText(obj.m_menuText), m_me
 
 void Scene_Menu::init()
 {
-    // registerAction(sf::Keyboard::Scancode::W, SceneMenuActions::UP);
-    // registerAction(sf::Keyboard::Scancode::S, SceneMenuActions::DOWN);
-    // registerAction(sf::Keyboard::Scancode::D, SceneMenuActions::PLAY);
-    // registerAction(sf::Keyboard::Scancode::Escape, SceneMenuActions::QUIT);
     registerAction(sf::Keyboard::Scancode::W, SceneMenuActions::UP);
     registerAction(sf::Keyboard::Scancode::S, SceneMenuActions::DOWN);
     registerAction(sf::Keyboard::Scancode::D, SceneMenuActions::PLAY);
@@ -73,8 +66,6 @@ void Scene_Menu::init()
     auto jumpManBlock = m_entityManager.addEntity(EntityType::TILE);
     jumpManBlock->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
     jumpManBlock->addComponent<CTransform>(Vec2(1280 / 2 + 90, 768 / 2 - 64));
-
-    // drawLine({350, 350},{650, 650});
 }
 
 void Scene_Menu::update()
@@ -85,9 +76,7 @@ void Scene_Menu::update()
 
 void Scene_Menu::onEnd()
 {
-    // m_game->window().clear(sf::Color::White);
     m_game->window().close();
-    // TODO: Figure out what to do on end here
 }
 
 void Scene_Menu::sDoAction(const Action &action)
@@ -119,9 +108,7 @@ void Scene_Menu::sDoAction(const Action &action)
         }
         else if (action.name() == SceneMenuActions::PLAY)
         {
-            // m_game->changeScene(SceneMenuActions::PLAY, std::make_shared<Scene_Play>(m_game, m_selectedMenuIndex, m_game->getAssets().getFont("FontName")), true); // This is butchured fasho
             m_game->changeScene(SceneMenuActions::PLAY, std::make_shared<Scene_Play>(m_game, m_levelPaths[m_selectedMenuIndex], m_game->getAssets().getFont("byteSized2")), true);
-            // m_game->changeScene(SceneMenuActions::PLAY, std::make_shared<Scene_Play>(m_game, "Level 1", m_game->getAssets().getFont("byteSized2")), false);
         }
         else if (action.name() == SceneMenuActions::QUIT)
         {
@@ -173,7 +160,7 @@ void Scene_Menu::sRender()
         if (e->hasComponent<CAnimation>())
         {
             auto &animation = e->getComponent<CAnimation>().animation;
-            animation.update(); // ??? OG class concempt didn't have any animations in menu scene
+            animation.update(); // ??? OG class concept didn't have any animations in menu scene
             auto tempVari = animation.getSprite();
             auto tempVari2 = animation.getSize();
             animation.getSprite().setRotation(sf::degrees(transform.angle));

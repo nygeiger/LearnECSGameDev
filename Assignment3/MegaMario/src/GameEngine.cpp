@@ -1,7 +1,3 @@
-// #include "../headers/GameEngine.h"
-// #include "../headers/Assets.h"
-// #include "../headers/Scene_Play.h"
-// #include "../headers/Scene_Menu.h"
 #include "headers/GameEngine.h"
 #include "headers/Assets.h"
 #include "headers/Scene_Play.h"
@@ -19,15 +15,8 @@ GameEngine::GameEngine(const std::string &path)
 void GameEngine::init(const std::string &path)
 {
     m_assets.loadFromFile(path);
-
-    // m_window.create(sf::VideoMode({1280, 768}), "Definitely not Ma");
     m_window.create(sf::VideoMode({1284, 768}), "Definitely not Mario");
-    // 1284 / 12 = 107
-    // 768 / 12 = 64
-
     m_window.setFramerateLimit(60);
-
-    // sUserInput();
 
     // // ImGui::SFML::(m_window);
 
@@ -35,9 +24,7 @@ void GameEngine::init(const std::string &path)
     // ImGui::GetStyle().ScaleAllSizes(2.0f);
     // ImGui::GetIO().FontGlobalScale = 2.0f;
     sf::Font tempFont;
-
-    // changeScene("MENU", std::make_shared<Scene_Menu>(tempFont ,*this)); // Trigger constr initial err?
-    changeScene("MENU", std::make_shared<Scene_Menu>(tempFont, this)); // Trigger constr initial err?
+    changeScene("MENU", std::make_shared<Scene_Menu>(tempFont, this));
 }
 
 void GameEngine::update()
@@ -64,11 +51,9 @@ sf::RenderWindow &GameEngine::window()
 {
     return m_window;
 }
-// sf::RenderWindow& GameEngine::window() {
-//     return m_window;
-// }
 
-const bool GameEngine::debug() {
+const bool GameEngine::debug()
+{
     return m_debug;
 }
 
@@ -89,7 +74,7 @@ void GameEngine::changeScene(Scene &scene)
 {
 }
 
-void GameEngine::changeScene(/*bool endCurrentScene = true*/)
+void GameEngine::changeScene()
 {
     sf::Font tempFont;
     m_sceneMap.erase(m_currentScene);
@@ -125,7 +110,8 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
         }
 
         /// Only for debuging, don't bind key to anything else
-        if (e.scancode == sf::Keyboard::Scancode::L) {
+        if (e.scancode == sf::Keyboard::Scancode::L)
+        {
             m_debug = !m_debug;
         }
     };

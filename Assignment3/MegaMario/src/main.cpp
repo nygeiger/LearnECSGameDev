@@ -9,7 +9,6 @@
 int main(int argc, char* argv[]) {
     std::cout << "Hello, Mega Mario!" << std::endl;
 
-    // GameEngine g("assets/tempAssets.txt");
     GameEngine g("../assets/tempAssets.txt");
     g.run();
     return 0;

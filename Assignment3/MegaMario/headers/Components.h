@@ -77,7 +77,7 @@ class CGravity : public Component {
 
 class CState : public Component {
     public :
-        std::string state = "jumping"; // Change?
+        std::string state = "Stand";
         CState() = default;
         CState(const std::string s) : state(s){}
 };

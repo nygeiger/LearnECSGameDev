@@ -31,7 +31,7 @@ void Scene_Play::init(const std::string &levelPath)
     registerAction(sf::Keyboard::Scancode::D, ScenePlayActions::RIGHT);
 
     m_gridText.setCharacterSize(12);
-    
+
     loadLevel(levelPath);
 }
 
@@ -81,6 +81,21 @@ void Scene_Play::loadLevel(const std::string &fileName)
             tile->getComponent<CTransform>().scale = textToGridBlockRatio;
             tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
         }
+        if (lineHeader == "Question")
+        {
+            std::string animationName;
+            /*size_t*/ int gx, gy;
+            file >> animationName >> gx >> gy;
+            const bool bp = true;
+            auto tile = m_entityManager.addEntity(EntityType::TILE);
+            tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), false);
+            tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+
+            const Vec2 textureSize = tile->getComponent<CAnimation>().animation.getSize();
+            const Vec2 textToGridBlockRatio = {m_gridSize.x / textureSize.x, m_gridSize.y / textureSize.y};
+            tile->getComponent<CTransform>().scale = textToGridBlockRatio;
+            tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
+        }
     }
 
     //  Note:   all of the code below is sample code which shows you how to set up
@@ -89,42 +104,20 @@ void Scene_Play::loadLevel(const std::string &fileName)
     spawnPlayer();
 
     // some sample entities
-    auto brick = m_entityManager.addEntity(EntityType::TILE);
     // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
-    brick->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BRICK), true);
-    auto tempVari = brick->getComponent<CAnimation>().animation.m_sprite.getScale();
-    brick->addComponent<CTransform>(Vec2(96, 480));
 
     // NOTE: Your final code should position the entity with the grid x,y position read from the file:
     // brick->addComponent<CTransform>(gridToMidPixel(gridX, gridY, brick));
 
-    if (brick->getComponent<CAnimation>().animation.getName() == AnimationType::BRICK)
-    {
-        std::cout << "This could be a good way of identifying if a tile is a brick" << std::endl;
-    }
-
-    auto block = m_entityManager.addEntity(EntityType::TILE);
-    block->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BLOCK), true);
-    block->addComponent<CTransform>(Vec2(224, 48));
-    const Vec2 currentBlockSize = block->getComponent<CAnimation>().animation.getSize();
-    const Vec2 textToWindowSizeFactor = {m_game->window().getSize().x / currentBlockSize.x, m_game->window().getSize().y / currentBlockSize.y};
-    const int blockToWindowSizeRatio = 12; // blocks are 1/12 of window size
-    block->getComponent<CAnimation>().animation.getSprite().setScale({(currentBlockSize.x * textToWindowSizeFactor.x) / blockToWindowSizeRatio, (currentBlockSize.y * textToWindowSizeFactor.y) / blockToWindowSizeRatio});
-    // add bounding box, this will now show up if we press the 'C' key
-    // block->addComponent<CBoundingBox>(m_game->getAssets().getAnimation(AnimationType::BLOCK).getSize());
-    const auto tempVari2 = block->getComponent<CAnimation>().animation.getSize();
-    const auto tempVari3 = m_game->getAssets().getAnimation(AnimationType::BLOCK).getSize();
-    block->addComponent<CBoundingBox>(block->getComponent<CAnimation>().animation.getSize());
-
-    auto question = m_entityManager.addEntity(EntityType::TILE);
-    question->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::QUESTION), true);
-    question->addComponent<CTransform>(Vec2(352, 480));
-    const Vec2 questionTextureSize = question->getComponent<CAnimation>().animation.getSize();
-    const Vec2 questionTextToGridBlockRatio = {m_gridSize.x / questionTextureSize.x, m_gridSize.y / questionTextureSize.y};
-    question->getComponent<CTransform>().scale = questionTextToGridBlockRatio;
-    question->addComponent<CBoundingBox>(questionTextureSize * questionTextToGridBlockRatio);
-    const auto tempVari4 = questionTextureSize * questionTextToGridBlockRatio;
-    const bool bp = true;
+    // auto question = m_entityManager.addEntity(EntityType::TILE);
+    // question->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::QUESTION), true);
+    // question->addComponent<CTransform>(Vec2(352, 480));
+    // const Vec2 questionTextureSize = question->getComponent<CAnimation>().animation.getSize();
+    // const Vec2 questionTextToGridBlockRatio = {m_gridSize.x / questionTextureSize.x, m_gridSize.y / questionTextureSize.y};
+    // question->getComponent<CTransform>().scale = questionTextToGridBlockRatio;
+    // question->addComponent<CBoundingBox>(questionTextureSize * questionTextToGridBlockRatio);
+    // const auto tempVari4 = questionTextureSize * questionTextToGridBlockRatio;
+    // const bool bp = true;
 
     // NOTE: THIS IS INCREDIBLY IMPORTANT PLEASE READ THIS EXAMPLE
     /* Components are now returned as refrences rather than pointers
@@ -147,15 +140,13 @@ void Scene_Play::loadLevel(const std::string &fileName)
 void Scene_Play::spawnPlayer()
 {
     // here is a sple player enity which you can use to construct other entities
-
-    m_player = m_entityManager.addEntity(EntityType::PLAYER);
-    m_player->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND), true);
-    // m_player->addComponent<CTransform>(Vec2(224, 352));
-    m_player->addComponent<CTransform>(Vec2(1280 / 2, 768 / 2));
-    m_player->addComponent<CBoundingBox>(Vec2(48, 48));
-    m_player->addComponent<CState>("STAND");
-    m_player->addComponent<CInput>();
-    m_player->addComponent<CGravity>(1);
+    std::shared_ptr<Entity> playerEnt = player();
+    playerEnt->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND), true);
+    playerEnt->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
+    playerEnt->addComponent<CBoundingBox>((playerEnt->getComponent<CAnimation>().animation.getSize() - Vec2(16, 16)));
+    playerEnt->addComponent<CState>("STAND");
+    playerEnt->addComponent<CInput>();
+    playerEnt->addComponent<CGravity>(1);
 
     // TODO: be sure to addd the remaining components to the palyer
     // be sure to destroy the dead player if you're respawning
@@ -198,37 +189,85 @@ void Scene_Play::sMovement()
     // TODO: Implement the maximum player speed in both x and y directions
     // NOTE: Setting an entity's scale.x to -1/1 will make it face to the left/right
 
+    const float playerLowestPoint = 12 * m_gridSize.y;
+
     const float xMaxSpeed = 7.0f;
     const float xMaxSpeedInv = xMaxSpeed * -1;
     const float yMaxSpeed = 25.0f;
     const float yMaxSpeedInv = yMaxSpeed * -1;
     const float runSpeed = 4.75;
 
-    auto &playerInput = m_player->getComponent<CInput>();
+    // auto playerEnt = player();
+    // auto &playerInput = playerEnt->getComponent<CInput>();
+    // auto &playerPos = playerEnt->getComponent<CTransform>().pos;
 
-    if (playerInput.left)
-    {
-        m_player->getComponent<CTransform>().velocity.x = -runSpeed;
-    }
-    else if (playerInput.right)
-    {
-        m_player->getComponent<CTransform>().velocity.x = runSpeed;
-    }
-    else
-    {
-        m_player->getComponent<CTransform>().velocity.x = 0;
-    }
+    /// TODO: Move player logic into entMan loop? Since different entities may need cust logic it'd be the logical place to be
+    // if (playerInput.left)
+    // {
+    //     playerEnt->getComponent<CTransform>().velocity.x = -runSpeed;
+    // }
+    // else if (playerInput.right)
+    // {
+    //     playerEnt->getComponent<CTransform>().velocity.x = runSpeed;
+    // }
+    // else
+    // {
+    //     playerEnt->getComponent<CTransform>().velocity.x = 0;
+    // }
 
-    if (playerInput.canJump && playerInput.up)
-    {
-        m_player->getComponent<CTransform>().velocity.y -= 17; // Delete "playerVelocity" Vec2 and just do this?
-        auto &playerInput = m_player->getComponent<CInput>().canJump = false;
-        m_player->addComponent<CState>(PlayerStates::JUMP);
-        m_player->addComponent<CGravity>(1);
-    }
+    // if (playerInput.canJump && playerInput.up)
+    // {
+    //     playerEnt->getComponent<CTransform>().velocity.y -= 17; // Delete "playerVelocity" Vec2 and just do this?
+    //     auto &playerInput = playerEnt->getComponent<CInput>().canJump = false;
+    //     playerEnt->addComponent<CState>(PlayerStates::JUMP);
+    //     playerEnt->addComponent<CGravity>(1);
+    // }
+
+    // if (playerPos.y > playerLowestPoint) {
+    //     playerEnt->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
+    // }
+
+    // if (playerPos.x - playerEnt->getComponent<CTransform>().velocity.x <= 0 &&  playerEnt->getComponent<CTransform>().velocity.x < 0) {
+    //     playerEnt->getComponent<CTransform>().velocity.x = 0;
+    // }
 
     for (auto e : m_entityManager.getEntities())
     {
+        if (e->tag() == EntityType::PLAYER)
+        {
+            auto &playerInput = e->getComponent<CInput>();
+            auto &playerPos = e->getComponent<CTransform>().pos;
+            if (playerInput.left)
+            {
+                e->getComponent<CTransform>().velocity.x = -runSpeed;
+            }
+            else if (playerInput.right)
+            {
+                e->getComponent<CTransform>().velocity.x = runSpeed;
+            }
+            else
+            {
+                e->getComponent<CTransform>().velocity.x = 0;
+            }
+
+            if (playerInput.canJump && playerInput.up)
+            {
+                e->getComponent<CTransform>().velocity.y -= 17; // Delete "playerVelocity" Vec2 and just do this?
+                auto &playerInput = e->getComponent<CInput>().canJump = false;
+                e->addComponent<CState>(PlayerStates::JUMP);
+                e->addComponent<CGravity>(1);
+            }
+
+            if (playerPos.y > playerLowestPoint)
+            {
+                e->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
+            }
+
+            if (playerPos.x - e->getComponent<CTransform>().velocity.x <= 0 && e->getComponent<CTransform>().velocity.x < 0)
+            {
+                e->getComponent<CTransform>().velocity.x = 0;
+            }
+        }
         if (e->hasComponent<CGravity>())
         {
             e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
@@ -292,41 +331,42 @@ void Scene_Play::sCollision()
     //      This will be used in the Animation system
 
     /// TODO: Logic to make sure edge cases are considered ex: high velocity (although it's limited in each direction)
+    auto playerEnt = player();
     for (auto &tileEnt : m_entityManager.getEntities(EntityType::TILE))
     {
         if (tileEnt->hasComponent<CBoundingBox>())
         {
-            const Vec2 overlapVec = Physics::GetOverlap(tileEnt, m_player);
+            // const Vec2 overlapVec = Physics::GetOverlap(tileEnt, m_player);
+            const Vec2 overlapVec = Physics::GetOverlap(tileEnt, playerEnt);
             if (Physics::IsOverlap(overlapVec))
             {
-                const Vec2 prevOverlapVec = Physics::GetPreviousOverlap(tileEnt, m_player);
-                CTransform playerTrans = m_player->getComponent<CTransform>();
-                CBoundingBox playerBBox = m_player->getComponent<CBoundingBox>();
+                const Vec2 prevOverlapVec = Physics::GetPreviousOverlap(tileEnt, playerEnt);
+                CTransform playerTrans = playerEnt->getComponent<CTransform>();
+                CBoundingBox playerBBox = playerEnt->getComponent<CBoundingBox>();
 
                 /// TODO: Use these or velocity???
-                const bool playerCameFromRight = m_player->getComponent<CTransform>().prevPos.x > m_player->getComponent<CTransform>().pos.x;
-                const bool playerCameFromBottom = m_player->getComponent<CTransform>().prevPos.y > m_player->getComponent<CTransform>().pos.y;
+                const bool playerCameFromRight = playerEnt->getComponent<CTransform>().prevPos.x > playerEnt->getComponent<CTransform>().pos.x;
+                const bool playerCameFromBottom = playerEnt->getComponent<CTransform>().prevPos.y > playerEnt->getComponent<CTransform>().pos.y;
 
                 if (tileEnt->getComponent<CAnimation>().animation.getName() == AnimationType::BLOCK)
                 {
                     if (prevOverlapVec.y <= 0 && prevOverlapVec.x > 0) // Entities collided via y-axis i.e. Megaman landing on a block
                     {
-                        m_player->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapVec.y : -overlapVec.y;
+                        playerEnt->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapVec.y : -overlapVec.y;
                         if (playerCameFromBottom)
                         {
-                            m_player->getComponent<CTransform>().velocity.y = 0;
+                            playerEnt->getComponent<CTransform>().velocity.y = 0;
                         }
                         else
                         {
-                            m_player->getComponent<CTransform>().velocity.y = 0;
-                            m_player->getComponent<CInput>().canJump = true;
-                            // m_player->removeComponent<CGravity>();
+                            playerEnt->getComponent<CTransform>().velocity.y = 0;
+                            playerEnt->getComponent<CInput>().canJump = true;
+                            // playerEnt->addComponent<CState>(PlayerStates::STAND);
                         }
                     }
                     else if (prevOverlapVec.x <= 0 && prevOverlapVec.y > 0) // Entities collided via x-axis i.e. Megaman running into pipe
                     {
-                        m_player->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
-                        // m_player->getComponent<CTransform>().pos.x += (m_player->getComponent<CTransform>().velocity.x < 0) ? overlapVec.x : -overlapVec.x;
+                        playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
                     }
                     else
                     { // // Only when prevOv of x & y are <= 0; So "corner collision" ??
@@ -334,36 +374,61 @@ void Scene_Play::sCollision()
 
                     if (m_game->debug())
                     {
-                        createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, m_player, overlapVec);
+                        createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, playerEnt, overlapVec);
                     }
                 }
                 else if (tileEnt->getComponent<CAnimation>().animation.getName() == AnimationType::BRICK)
                 {
-                    tileEnt->destroy();
-                    m_player->addComponent<CGravity>(1);
+                    if (prevOverlapVec.y <= 0 && prevOverlapVec.x > 0) // Entities collided via y-axis i.e. Megaman landing on a block
+                    {
+                        playerEnt->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapVec.y : -overlapVec.y;
+                        if (playerCameFromBottom)
+                        {
+                            playerEnt->getComponent<CTransform>().velocity.y = 0;
+                        }
+                        else
+                        {
+                            playerEnt->getComponent<CTransform>().velocity.y = 0;
+                            playerEnt->getComponent<CInput>().canJump = true;
+                            playerEnt->addComponent<CState>(PlayerStates::STAND);
+                        }
+                    }
+                    else if (prevOverlapVec.x <= 0 && prevOverlapVec.y > 0) // Entities collided via x-axis i.e. Megaman running into pipe
+                    {
+                        playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
+                    }
+                    else
+                    { // // Only when prevOv of x & y are <= 0; So "corner collision" ??
+                    }
+
+                    if (m_game->debug())
+                    {
+                        createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, playerEnt, overlapVec);
+                    }
                 }
                 else if (tileEnt->getComponent<CAnimation>().animation.getName() == AnimationType::QUESTION)
                 {
-                    const Vec2 previousOvelap = Physics::GetPreviousOverlap(tileEnt, m_player);
+                    const Vec2 previousOvelap = Physics::GetPreviousOverlap(tileEnt, playerEnt);
 
                     if (prevOverlapVec.y <= 0 && prevOverlapVec.x > 0)
                     {
                         if (playerCameFromBottom)
                         {
                             tileEnt->destroy();
-                            m_player->getComponent<CTransform>().velocity.y = 0;
-                            m_player->getComponent<CTransform>().pos.y += overlapVec.y;
+                            playerEnt->getComponent<CTransform>().velocity.y = 0;
+                            playerEnt->getComponent<CTransform>().pos.y += overlapVec.y;
                         }
                         else
                         {
-                            m_player->getComponent<CTransform>().velocity.y = 0;
-                            m_player->getComponent<CTransform>().pos.y -= overlapVec.y;
-                            m_player->getComponent<CInput>().canJump = true;
+                            playerEnt->getComponent<CTransform>().velocity.y = 0;
+                            playerEnt->getComponent<CTransform>().pos.y -= overlapVec.y;
+                            playerEnt->getComponent<CInput>().canJump = true;
+                            playerEnt->addComponent<CState>(PlayerStates::STAND);
                         }
                     }
                     else if (prevOverlapVec.x <= 0 && prevOverlapVec.y > 0)
                     {
-                        m_player->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
+                        playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapVec.x : -overlapVec.x;
                     }
                     else
                     { // Only when prevOv of x & y are <= 0; So corner collision ??
@@ -371,7 +436,7 @@ void Scene_Play::sCollision()
 
                     if (m_game->debug())
                     {
-                        createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, m_player, overlapVec);
+                        createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, playerEnt, overlapVec);
                     }
                 }
             }
@@ -385,6 +450,7 @@ void Scene_Play::sCollision()
 
 void Scene_Play::sDoAction(const Action &action)
 {
+    auto playerEnt = player();
     if (action.type() == ActionType::START)
     {
 
@@ -410,19 +476,19 @@ void Scene_Play::sDoAction(const Action &action)
         }
         else if (action.name() == ScenePlayActions::UP)
         {
-            m_player->getComponent<CInput>().up = true;
+            playerEnt->getComponent<CInput>().up = true;
         }
         else if (action.name() == ScenePlayActions::LEFT)
         {
-            m_player->getComponent<CInput>().right = false;
-            m_player->getComponent<CInput>().left = true;
-            m_player->getComponent<CState>().state = PlayerStates::RUN;
+            playerEnt->getComponent<CInput>().right = false;
+            playerEnt->getComponent<CInput>().left = true;
+            playerEnt->getComponent<CState>().state = PlayerStates::RUN;
         }
         else if (action.name() == ScenePlayActions::RIGHT)
         {
-            m_player->getComponent<CInput>().left = false;
-            m_player->getComponent<CInput>().right = true;
-            m_player->getComponent<CState>().state = PlayerStates::RUN;
+            playerEnt->getComponent<CInput>().left = false;
+            playerEnt->getComponent<CInput>().right = true;
+            playerEnt->getComponent<CState>().state = PlayerStates::RUN;
         }
         else if (action.name() == ScenePlayActions::TO_MAIN_MENU)
         {
@@ -434,23 +500,23 @@ void Scene_Play::sDoAction(const Action &action)
 
         if (action.name() == ScenePlayActions::UP)
         {
-            m_player->getComponent<CInput>().up = false;
+            playerEnt->getComponent<CInput>().up = false;
         }
         else if (action.name() == ScenePlayActions::LEFT)
         {
-            m_player->getComponent<CInput>().left = false;
+            playerEnt->getComponent<CInput>().left = false;
         }
         else if (action.name() == ScenePlayActions::RIGHT)
         {
-            m_player->getComponent<CInput>().right = false;
+            playerEnt->getComponent<CInput>().right = false;
         }
 
         // TODO: Goes here? Maybe in sMovement?
         // TODO: Is this the best way to reset state to defualt?
-        if (!m_player->getComponent<CInput>().right && !m_player->getComponent<CInput>().left &&
-            !m_player->getComponent<CInput>().up && !m_player->getComponent<CInput>().shoot)
+        if (!playerEnt->getComponent<CInput>().right && !playerEnt->getComponent<CInput>().left &&
+            !playerEnt->getComponent<CInput>().up && !playerEnt->getComponent<CInput>().shoot)
         {
-            m_player->addComponent<CState>().state = PlayerStates::STAND;
+            playerEnt->addComponent<CState>().state = PlayerStates::STAND;
         }
     }
 }
@@ -560,7 +626,6 @@ void Scene_Play::sRender()
 
     // set the viewport of the window to be centered on the play
     auto &pPos = player()->getComponent<CTransform>().pos;
-    // float windowCenterX = std::max(m_game->window().getSize().x /);
 
     sf::View view = m_game->window().getView();
     view.setCenter({pPos.x, pPos.y - (m_gridSize.y * 3)});
@@ -576,12 +641,10 @@ void Scene_Play::sRender()
             if (e->hasComponent<CAnimation>())
             {
                 auto &animation = e->getComponent<CAnimation>().animation;
-                // animation.update();
                 animation.getSprite().setRotation(sf::degrees(transform.angle));
                 animation.getSprite().setPosition({transform.pos.x, transform.pos.y});
                 animation.getSprite().setScale({transform.scale.x, transform.scale.y});
                 m_game->window().draw(animation.getSprite());
-                // animation.update();
             }
         }
     }
@@ -598,7 +661,7 @@ void Scene_Play::sRender()
                 auto &transform = e->getComponent<CTransform>();
                 sf::RectangleShape rect;
 
-                rect.setSize(sf::Vector2f(box.size.x - 1, box.size.y - 1)); // minues one because of outline thickness?
+                rect.setSize(sf::Vector2f(box.size.x - 1, box.size.y - 1)); // minus one because of outline thickness?
                 rect.setOrigin(sf::Vector2f(box.halfsize.x, box.halfsize.y));
                 rect.setPosition({transform.pos.x, transform.pos.y});
                 rect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -622,7 +685,6 @@ void Scene_Play::sRender()
         gridOnText.setFillColor(sf::Color::White);
         gridOnText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y});
         m_game->window().draw(gridOnText);
-        // drawGrid();
         drawGrid();
     }
 

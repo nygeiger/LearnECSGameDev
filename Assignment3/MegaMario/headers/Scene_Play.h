@@ -16,7 +16,7 @@ class Scene_Play : public Scene {
         std::string WEAPON;
     };
 
-    std::shared_ptr<Entity> m_player;
+    // std::shared_ptr<Entity> m_player;
     std::string             m_levelPath;
     PlayerConfig            m_playerConfig;
     bool                    m_drawTextures = true;

@@ -31,8 +31,8 @@ void Scene_Menu::init()
     m_menuStrings.push_back("Level 3");
 
     m_levelPaths.push_back("../config/level1config.txt");
-    m_levelPaths.push_back("../config/level1config.txt");
-    m_levelPaths.push_back("../config/level1config.txt");
+    m_levelPaths.push_back("../config/level2config.txt");
+    m_levelPaths.push_back("../config/level3config.txt");
 
     m_menuText.setFont(m_game->getAssets().getFont("byteSized2"));
     m_menuText.setCharacterSize(64);

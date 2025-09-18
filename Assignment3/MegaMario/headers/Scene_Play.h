@@ -44,6 +44,7 @@ class Scene_Play : public Scene {
     void sDoAction(const Action& action);
     void sDebug();
     void sLifespan();
+                        /// TODO: State System???
     
     Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
 

@@ -361,7 +361,7 @@ void Scene_Play::sCollision()
                         {
                             playerEnt->getComponent<CTransform>().velocity.y = 0;
                             playerEnt->getComponent<CInput>().canJump = true;
-                            // playerEnt->addComponent<CState>(PlayerStates::STAND);
+                            if (!Physics::IsOverlap(prevOverlapVec)) playerEnt->addComponent<CState>(playerEnt->getComponent<CInput>().left || playerEnt->getComponent<CInput>().right ? PlayerStates::RUN : PlayerStates::STAND);
                         }
                     }
                     else if (prevOverlapVec.x <= 0 && prevOverlapVec.y > 0) // Entities collided via x-axis i.e. Megaman running into pipe
@@ -523,9 +523,9 @@ void Scene_Play::sDoAction(const Action &action)
 
 void Scene_Play::sAnimation()
 {
-    // TODO: Complete the Animation class code first
+    /// TODO: Complete the Animation class code first
 
-    // TODO: for each entity with an animation, call entity->getComponent<CAnimation>().animation.update()
+    /// TODO: for each entity with an animation, call entity->getComponent<CAnimation>().animation.update()
     //          if the animation is not repeated, and it has ended, destroy the entity
     for (auto &entity : m_entityManager.getEntities())
     {
@@ -541,12 +541,9 @@ void Scene_Play::sAnimation()
     const std::string playerAnimationName = player()->getComponent<CAnimation>().animation.getName();
 
     /// TODO: Player state -> Animation map???
-    if (playerState.state == PlayerStates::RUN)
+    if (playerState.state == PlayerStates::RUN && playerAnimationName != AnimationType::RUN)
     {
-        if (playerAnimationName != AnimationType::RUN)
-        {
-            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
-        }
+        player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
     }
     else if (playerState.state == PlayerStates::STAND && playerAnimationName != AnimationType::STAND)
     {

@@ -36,6 +36,12 @@ Font byteSized2 ../assets/fonts/gamtex/Gamtex.ttf
 -   Frame Count | F | int (number of frames in the animation)
 -   Anim Speed | S | int (number of game frames between anim frames)
 */
+
+Animation Brick Brick 1 1
+Animation Block floorBlock 1 1
+Animation Question TexQBlock 3 12
+Animation Bullet TexBullet 1 0
+
 /*
 - Animation Asset Specification (2): Account for animations within a collective sprite sheet (Texture "T" is a collection of related & unrelated sprites)
 -   AnimationMap N T F S X Y Cols Rows
@@ -50,9 +56,9 @@ Font byteSized2 ../assets/fonts/gamtex/Gamtex.ttf
 */
 
 AnimationMap Stand MegaMan 2 30 0 0 10 7
-Animation Brick Brick 1 1
-Animation Block floorBlock 1 1
-Animation Question TexQBlock 3 12
 AnimationMap Run MegaMan 3 4 3 0 10 7
 // AnimationMap Jump MegaMan 1 60 6 0 10 7
 AnimationMap Jump MegaMan 1 4 6 0 10 7
+AnimationMap StandShoot MegaMan 1 4 2 1 10 7
+AnimationMap RunShoot MegaMan 3 4 3 1 10 7
+AnimationMap JumpShoot MegaMan 1 4 6 1 10 7

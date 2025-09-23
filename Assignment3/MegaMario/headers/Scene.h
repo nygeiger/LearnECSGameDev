@@ -23,6 +23,7 @@ protected:
 
     virtual void onEnd() = 0;
     void setPaused(bool paused);
+    Vec2 getTextureToSizeRatio(const Vec2 startingSize, Vec2 desiredSize) const;
 
 public:
     Scene();

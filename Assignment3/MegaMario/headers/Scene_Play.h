@@ -4,75 +4,86 @@
 #include "Scene.h"
 #include "EntityManager.h"
 
-
 #include <memory>
 #include <map>
 
+class Scene_Play : public Scene
+{
 
-class Scene_Play : public Scene {
-
-    struct PlayerConfig {
+    struct PlayerConfig
+    {
         float X, Y, CX, CY, SPEED, MAXSPEED, JUMP, GRAVITY;
         std::string WEAPON;
     };
 
-    std::shared_ptr<Entity> m_player;
-    std::string             m_levelPath;
-    PlayerConfig            m_playerConfig;
-    bool                    m_drawTextures = true;
-    bool                    m_drawCollision = false;
-    bool                    m_drawGrid = false;
-    const Vec2              m_gridSize = {64, 64}; // TODO: All scenes should have this?
-    sf::Text                m_gridText;
+    // std::shared_ptr<Entity> m_player;
+    std::string m_levelPath;
+    PlayerConfig m_playerConfig;
+    bool m_drawTextures = true;
+    bool m_drawCollision = false;
+    bool m_drawGrid = false;
+    const Vec2 m_gridSize = {64, 64}; // TODO: All scenes should have this?
+    sf::Text m_gridText;
 
     void init();
-    void init(const std::string& levelPath);
-    void loadLevel(const std::string& filename);
+    void init(const std::string &levelPath);
+    void loadLevel(const std::string &filename);
     void spawnPlayer();
     void spawnBullet(std::shared_ptr<Entity> entity);
     void onEnd();
-    void drawLine(const Vec2& p1, const Vec2& p2) const;
+    void drawLine(const Vec2 &p1, const Vec2 &p2) const;
     void drawGrid() const;
     std::shared_ptr<Entity> player();
 
-    //Systems
+    // Systems
     void sAnimation();
     void sMovement();
     void sEnemySpawner();
     void sCollision();
     void sRender();
-    void sDoAction(const Action& action);
+    void sDoAction(const Action &action);
     void sDebug();
     void sLifespan();
-    
+    /// TODO: State System???
+
     Vec2 gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entity> entity);
 
-
-    public:
-        Scene_Play(GameEngine* gameEngine, const std::string& levelPath, const sf::Font& font);
-        void update();
+public:
+    Scene_Play(GameEngine *gameEngine, const std::string &levelPath, const sf::Font &font);
+    void update();
 };
 
 /// TODO: Examine namespaces and idenfiy which can be enumerated
-namespace ScenePlayActions {
+namespace ScenePlayActions
+{
 
     // Genearal Actions
-    static const std::string PAUSE = "PAUSE";
-    static const std::string TO_MAIN_MENU = "TO_MAIN_MENU";
-    static const std::string TOGGLE_TEXTURE ="TOGGLE_TEXTURE";
-    static const std::string TOGGLE_COLLISION ="TOGGLE_COLLISION";
-    static const std::string TOGGLE_GRID = "TOGGLE_GRID";
+    const std::string PAUSE = "PAUSE";
+    const std::string TO_MAIN_MENU = "TO_MAIN_MENU";
+    const std::string TOGGLE_TEXTURE = "TOGGLE_TEXTURE";
+    const std::string TOGGLE_COLLISION = "TOGGLE_COLLISION";
+    const std::string TOGGLE_GRID = "TOGGLE_GRID";
 
-    //Gameplay Actions
-    static const std::string UP ="UP";
-    static const std::string LEFT ="LEFT";
-    static const std::string RIGHT = "RIGHT";
+    // Gameplay Actions
+    const std::string UP = "UP";
+    const std::string LEFT = "LEFT";
+    const std::string RIGHT = "RIGHT";
+    const std::string SHOOT = "SHOOT";
 };
 
-namespace PlayerStates {
-    static const std::string STAND = "Stand";
-    static const std::string JUMP = "Jump";
-    static const std::string RUN = "Run";
+namespace PlayerStates
+{
+    const std::string STAND = "Stand";
+    const std::string JUMP = "Jump";
+    const std::string RUN = "Run";
+    // static const std::string SHOOT = "SHOOT";
 };
+
+namespace ScenePlayUtil
+{
+    // static const Vec2 GRID_SIZE = {64, 64};
+    const Vec2 BULLET_SIZE = {8.0f, 8.0f};
+    const Vec2 BULLET_VELOCITY = {14.0f, 0.0f};
+}
 
 #endif

@@ -77,12 +77,16 @@ class CGravity : public Component {
 
 class CState : public Component {
     public :
-        std::string state = "jumping"; // Change?
+        std::string state = "Stand";
         CState() = default;
         CState(const std::string s) : state(s){}
 };
 
+// class CActionFrameRecord : public Component {
+//     public :
+//         std::map <std::string, size_t> actionFrameRecord;
+//         CActionFrameRecord() = default;
+//         CActionFrameRecord(const std::string actionName , size_t frame) {actionFrameRecord[actionName] = frame; }
+// };
 
 #endif
-
-

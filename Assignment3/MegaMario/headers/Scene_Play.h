@@ -82,8 +82,11 @@ namespace PlayerStates
 namespace ScenePlayUtil
 {
     // static const Vec2 GRID_SIZE = {64, 64};
+
+    /// @brief Bullet utils
     const Vec2 BULLET_SIZE = {8.0f, 8.0f};
     const Vec2 BULLET_VELOCITY = {14.0f, 0.0f};
+    const float SHOOT_FRAME_LIMIT = 6.0f;
 }
 
 #endif

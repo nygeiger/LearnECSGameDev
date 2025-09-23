@@ -56,12 +56,22 @@ class Animation {
 
 namespace AnimationType
 {
+    /// @brief player animations
     static const std::string STAND = "Stand";
+    static const std::string STAND_SHOOT = "StandShoot";
     static const std::string RUN = "Run";
+    static const std::string RUN_SHOOT = "RunShoot";
     static const std::string JUMP = "Jump";
+    static const std::string JUMP_SHOOT = "JumpShoot";
+    static const std::string SHOOT = "Shoot";
+
+    /// @brief tile animations
     static const std::string BRICK = "Brick";
     static const std::string BLOCK = "Block";
     static const std::string QUESTION = "Question";
+
+    /// @brief enity animations
+    static const std::string BULLET = "Bullet";
 };
 
 #endif

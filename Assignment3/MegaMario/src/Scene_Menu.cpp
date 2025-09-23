@@ -55,6 +55,18 @@ void Scene_Menu::init()
     brick3->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
     brick3->addComponent<CTransform>(Vec2(1280 / 2 + 30, 768 / 2));
 
+    auto tempShootAniStand = m_entityManager.addEntity(EntityType::TILE); // auto brick3 = m_entityManager.addEntity("tile");
+    // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
+    // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    tempShootAniStand->addComponent<CAnimation>(m_game->getAssets().getAnimation("StandShoot"), true);
+    tempShootAniStand->addComponent<CTransform>(Vec2(1280 / 2 + 30, 768 / 2 + 64));
+
+    auto tempShootAniRun = m_entityManager.addEntity(EntityType::TILE); // auto brick3 = m_entityManager.addEntity("tile");
+    // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
+    // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
+    tempShootAniRun->addComponent<CAnimation>(m_game->getAssets().getAnimation("RunShoot"), true);
+    tempShootAniRun->addComponent<CTransform>(Vec2(1280 / 2 + 30, 768 / 2 + 128));
+
     auto block = m_entityManager.addEntity(EntityType::TILE); // auto block = m_entityManager.addEntity("tile");
     block->addComponent<CAnimation>(m_game->getAssets().getAnimation("Block"), true);
     block->addComponent<CTransform>(Vec2((9 * 64) + 32, (9 * 64) - 32));

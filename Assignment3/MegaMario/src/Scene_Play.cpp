@@ -29,6 +29,7 @@ void Scene_Play::init(const std::string &levelPath)
     registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
     registerAction(sf::Keyboard::Scancode::A, ScenePlayActions::LEFT);
     registerAction(sf::Keyboard::Scancode::D, ScenePlayActions::RIGHT);
+    registerAction(sf::Keyboard::Scancode::Space, ScenePlayActions::SHOOT);
 
     m_gridText.setCharacterSize(12);
 
@@ -76,6 +77,7 @@ void Scene_Play::loadLevel(const std::string &fileName)
             tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), false);
             tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
 
+            /// Only leaving the following for quick glance at original logic
             const Vec2 textureSize = tile->getComponent<CAnimation>().animation.getSize();
             const Vec2 textToGridBlockRatio = {m_gridSize.x / textureSize.x, m_gridSize.y / textureSize.y};
             tile->getComponent<CTransform>().scale = textToGridBlockRatio;
@@ -91,8 +93,8 @@ void Scene_Play::loadLevel(const std::string &fileName)
             tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), false);
             tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
 
-            const Vec2 textureSize = tile->getComponent<CAnimation>().animation.getSize();
-            const Vec2 textToGridBlockRatio = {m_gridSize.x / textureSize.x, m_gridSize.y / textureSize.y};
+            const Vec2 &textureSize = tile->getComponent<CAnimation>().animation.getSize();
+            const Vec2 textToGridBlockRatio = getTextureToSizeRatio(textureSize, m_gridSize);
             tile->getComponent<CTransform>().scale = textToGridBlockRatio;
             tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
         }
@@ -154,7 +156,41 @@ void Scene_Play::spawnPlayer()
 
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 {
-    // TODO: this should spawn a bullet at (from) the given entity, going in the direction the entitu is facing
+    // TODO: this should spawn a bullet at (from) the given entity, going in the direction the entity is facing
+    const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
+    const Vec2 tempSourceEntScale = entity->getComponent<CTransform>().scale;
+    const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
+
+    Vec2 bulletSpawnPos = sourceEntityLocation;
+
+    if (entitySourceFaceRight)
+    {
+        bulletSpawnPos.x += 5;
+    }
+    else
+    {
+        bulletSpawnPos.x -= 5;
+    }
+
+    auto bullet = m_entityManager.addEntity(EntityType::BULLET);
+
+    bullet->addComponent<CTransform>(bulletSpawnPos);
+    bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
+
+    bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
+
+    Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
+    bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
+    bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
+
+//     if (entity->hasComponent<CActionFrameRecord>())
+//     {
+//         entity->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
+//     }
+//     else
+//     {
+//         entity->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, m_currentFrame);
+//     }
 }
 
 void Scene_Play::update()
@@ -361,7 +397,8 @@ void Scene_Play::sCollision()
                         {
                             playerEnt->getComponent<CTransform>().velocity.y = 0;
                             playerEnt->getComponent<CInput>().canJump = true;
-                            if (!Physics::IsOverlap(prevOverlapVec)) playerEnt->addComponent<CState>(playerEnt->getComponent<CInput>().left || playerEnt->getComponent<CInput>().right ? PlayerStates::RUN : PlayerStates::STAND);
+                            if (!Physics::IsOverlap(prevOverlapVec))
+                                playerEnt->addComponent<CState>(playerEnt->getComponent<CInput>().left || playerEnt->getComponent<CInput>().right ? PlayerStates::RUN : PlayerStates::STAND);
                         }
                     }
                     else if (prevOverlapVec.x <= 0 && prevOverlapVec.y > 0) // Entities collided via x-axis i.e. Megaman running into pipe
@@ -494,6 +531,12 @@ void Scene_Play::sDoAction(const Action &action)
         {
             m_game->changeScene();
         }
+        else if (action.name() == ScenePlayActions::SHOOT)
+        {
+            // playerEnt->addComponent<CState>(PlayerStates::SHOOT);
+            playerEnt->getComponent<CInput>().shoot = true;
+            spawnBullet(playerEnt);
+        }
     }
     else if (action.type() == ActionType::END)
     {
@@ -509,6 +552,10 @@ void Scene_Play::sDoAction(const Action &action)
         else if (action.name() == ScenePlayActions::RIGHT)
         {
             playerEnt->getComponent<CInput>().right = false;
+        }
+        else if (action.name() == ScenePlayActions::SHOOT)
+        {
+            playerEnt->getComponent<CInput>().shoot = false;
         }
 
         // TODO: Goes here? Maybe in sMovement?
@@ -537,22 +584,70 @@ void Scene_Play::sAnimation()
 
     // TODO: set the animation of the player based on its CState component
     // if the player's state has been set to running
-    const CState &playerState = player()->getComponent<CState>();
+    const std::string &playerState = player()->getComponent<CState>().state;
+    const CInput &playerInput = player()->getComponent<CInput>();
     const std::string playerAnimationName = player()->getComponent<CAnimation>().animation.getName();
 
     /// TODO: Player state -> Animation map???
-    if (playerState.state == PlayerStates::RUN && playerAnimationName != AnimationType::RUN)
+    if (!playerInput.shoot)
     {
-        player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
+        if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN)
+        {
+            // player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::RUN_SHOOT : AnimationType::RUN), true);
+            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
+        }
+        else if (playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND)
+        {
+            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::STAND_SHOOT : AnimationType::STAND), true);
+        }
+        else if (playerState == PlayerStates::JUMP && playerAnimationName != AnimationType::JUMP)
+        {
+            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
+        }
     }
-    else if (playerState.state == PlayerStates::STAND && playerAnimationName != AnimationType::STAND)
+    else
     {
-        player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND), true);
+        if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN_SHOOT)
+        {
+            std::cout << "Adding Shoot Animation" << std::endl;
+            const auto tempAni = m_game->getAssets().getAnimation(AnimationType::RUN_SHOOT);
+            const auto tempCAni = CAnimation(tempAni, true);
+            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN_SHOOT), true);
+        }
+        else if (playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND_SHOOT)
+        {
+            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND_SHOOT), true);
+        }
+        else if (playerState == PlayerStates::JUMP && playerAnimationName != AnimationType::JUMP_SHOOT)
+        {
+            player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP_SHOOT), true);
+        }
     }
-    else if (playerState.state == PlayerStates::JUMP && playerAnimationName != AnimationType::JUMP)
-    {
-        player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
-    }
+    // if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN)
+    // {
+    //     // player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::RUN_SHOOT : AnimationType::RUN), true);
+    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
+    //     const bool bp = true;
+    // }
+    // else if (playerInput.shoot && (playerState == PlayerStates::RUN) && (playerAnimationName != AnimationType::RUN_SHOOT))
+    // {
+    //     std::cout << "Adding Shoot Animation" << std::endl;
+    //     const auto tempAni = m_game->getAssets().getAnimation(AnimationType::RUN_SHOOT);
+    //     const auto tempCAni = CAnimation(tempAni, true);
+    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN_SHOOT), true);
+    // }
+    // else if (playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND)
+    // {
+    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::STAND_SHOOT : AnimationType::STAND), true);
+    // }
+    // else if (playerInput.shoot && playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND_SHOOT)
+    // {
+    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND_SHOOT), true);
+    // }
+    // else if (playerState == PlayerStates::JUMP && playerAnimationName != AnimationType::JUMP)
+    // {
+    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
+    // }
 
     // Reflect Texture so that the texture faces where the player entity is moving
     if (player()->getComponent<CTransform>().velocity.x < 0 && player()->getComponent<CTransform>().scale.x > 0 || player()->getComponent<CTransform>().velocity.x > 0 && player()->getComponent<CTransform>().scale.x < 0)
@@ -699,6 +794,9 @@ void Scene_Play::sRender()
     m_game->window().display();
 }
 
+/// @brief draws a line between two given points to the window
+/// @param p1 point 1
+/// @param p2 point 2
 void Scene_Play::drawLine(const Vec2 &p1, const Vec2 &p2) const
 {
     sf::Vertex line[] = {{sf::Vector2f(p1.x, p1.y)}, {sf::Vector2f(p2.x, p2.y)}};
@@ -708,6 +806,8 @@ void Scene_Play::drawLine(const Vec2 &p1, const Vec2 &p2) const
 // Two ways to make it work:
 // - Display grid for entire window (so the lines will be completely independent from the view)
 // - Display rid for only new what the view sees (The grid "moves" with the view.)
+
+/// @brief  draws a grid (m_gridsize.x X m_gridSize.y) to the game window
 void Scene_Play::drawGrid() const
 { /// Significanly drops framerate. Mostlikely need to look at ways to minimize calls to sfml window.draw()
     const sf::Vector2f view_size = m_game->window().getView().getSize();
@@ -748,6 +848,8 @@ void Scene_Play::drawGrid() const
     }
 }
 
+/// @brief returns the player entity (there's only one player for this game)
+/// @return  pointer (shared_ptr<Entity>) to the player entity
 std::shared_ptr<Entity> Scene_Play::player()
 {
     auto &players = m_entityManager.getEntities(EntityType::PLAYER);

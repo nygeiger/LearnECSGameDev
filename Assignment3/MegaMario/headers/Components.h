@@ -82,7 +82,11 @@ class CState : public Component {
         CState(const std::string s) : state(s){}
 };
 
+// class CActionFrameRecord : public Component {
+//     public :
+//         std::map <std::string, size_t> actionFrameRecord;
+//         CActionFrameRecord() = default;
+//         CActionFrameRecord(const std::string actionName , size_t frame) {actionFrameRecord[actionName] = frame; }
+// };
 
 #endif
-
-

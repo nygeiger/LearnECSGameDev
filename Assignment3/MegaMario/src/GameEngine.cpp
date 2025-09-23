@@ -16,7 +16,7 @@ void GameEngine::init(const std::string &path)
 {
     m_assets.loadFromFile(path);
     m_window.create(sf::VideoMode({1284, 768}), "Definitely not Mario");
-    m_window.setFramerateLimit(60);
+    m_window.setFramerateLimit(60); /// Use SFML::Clock instead of Framerate limit?
 
     // // ImGui::SFML::(m_window);
 

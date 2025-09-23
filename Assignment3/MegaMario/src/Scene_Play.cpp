@@ -157,40 +157,41 @@ void Scene_Play::spawnPlayer()
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 {
     // TODO: this should spawn a bullet at (from) the given entity, going in the direction the entity is facing
-    const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
-    const Vec2 tempSourceEntScale = entity->getComponent<CTransform>().scale;
-    const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
 
-    Vec2 bulletSpawnPos = sourceEntityLocation;
-
-    if (entitySourceFaceRight)
+    // only captures this, and entity
+    auto spawnBulletLogic = [&]() -> void
     {
-        bulletSpawnPos.x += 5;
+        const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
+        const Vec2 tempSourceEntScale = entity->getComponent<CTransform>().scale;
+        const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
+
+        Vec2 bulletSpawnPos = sourceEntityLocation;
+        bulletSpawnPos.x += entitySourceFaceRight ? 5 : -5;
+
+        auto bullet = m_entityManager.addEntity(EntityType::BULLET);
+        bullet->addComponent<CTransform>(bulletSpawnPos);
+        bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
+        bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
+
+        Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
+        bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
+        bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
+    };
+
+    if (entity->hasComponent<CActionFrameRecord>())
+    {
+        auto &enityActionFrameRecord = entity->getComponent<CActionFrameRecord>().actionFrameRecord;
+        if (ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - enityActionFrameRecord[ScenePlayActions::SHOOT])
+        {
+            spawnBulletLogic();
+            entity->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
+        }
     }
     else
     {
-        bulletSpawnPos.x -= 5;
+        spawnBulletLogic();
+        entity->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, m_currentFrame);
     }
-
-    auto bullet = m_entityManager.addEntity(EntityType::BULLET);
-
-    bullet->addComponent<CTransform>(bulletSpawnPos);
-    bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
-
-    bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
-
-    Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
-    bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
-    bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
-
-//     if (entity->hasComponent<CActionFrameRecord>())
-//     {
-//         entity->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
-//     }
-//     else
-//     {
-//         entity->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, m_currentFrame);
-//     }
 }
 
 void Scene_Play::update()
@@ -216,6 +217,7 @@ void Scene_Play::update()
     //     // sRender();
     //     sAnimation();
     //     // sRender();
+    m_currentFrame++;
 }
 
 void Scene_Play::sMovement()
@@ -587,11 +589,13 @@ void Scene_Play::sAnimation()
     const std::string &playerState = player()->getComponent<CState>().state;
     const CInput &playerInput = player()->getComponent<CInput>();
     const std::string playerAnimationName = player()->getComponent<CAnimation>().animation.getName();
+    const auto playerAFR = player()->getComponent<CActionFrameRecord>().actionFrameRecord;
 
     /// TODO: Player state -> Animation map???
     if (!playerInput.shoot)
     {
-        if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN)
+        if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN &&
+            (playerAFR.find(ScenePlayActions::SHOOT) == playerAFR.end() || 30.0f <= m_currentFrame - playerAFR.at(ScenePlayActions::SHOOT)))
         {
             // player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::RUN_SHOOT : AnimationType::RUN), true);
             player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);

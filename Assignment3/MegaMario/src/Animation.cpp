@@ -62,7 +62,7 @@ void Animation::update()
             }
         }
         m_currentFrame++;
-        if (hasEnded()) {
+        if (hasEnded()) { // Do this in animation class? Or in sAnimation utilizing the .repeat property?
             m_currentFrame = 0;
         }
     }

@@ -408,6 +408,13 @@ void createCollisionAreaEntity(EntityManager &entityManager, const bool &playerC
     collisionVisualEnt->addComponent<CBoundingBox>(overlapVec);
 }
 
+void createCollisionTileEntity(EntityManager &entityManager, std::shared_ptr<Entity> tileEnt)
+{
+    auto collisionVisualEnt = entityManager.addEntity(EntityType::COLLISION_VISUAL);
+    collisionVisualEnt->addComponent<CTransform>(tileEnt->getComponent<CTransform>());
+    collisionVisualEnt->addComponent<CBoundingBox>(tileEnt->getComponent<CBoundingBox>());
+}
+
 void Scene_Play::sCollision()
 {
     // REMEMBER: SFML's (0,0) position is on the TOP-LEFT corner
@@ -439,7 +446,6 @@ void Scene_Play::sCollision()
                 CTransform playerTrans = playerEnt->getComponent<CTransform>();
                 CBoundingBox playerBBox = playerEnt->getComponent<CBoundingBox>();
 
-                /// TODO: Use these or velocity???
                 const bool playerCameFromRight = playerEnt->getComponent<CTransform>().prevPos.x > playerEnt->getComponent<CTransform>().pos.x;
                 const bool playerCameFromBottom = playerEnt->getComponent<CTransform>().prevPos.y > playerEnt->getComponent<CTransform>().pos.y;
 
@@ -464,16 +470,17 @@ void Scene_Play::sCollision()
                     {
                         playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
                     }
-                     else if (prevPlayerOverlapVec.x >= 0 && prevPlayerOverlapVec.y >= 0 && overlapPlayerVec.x >=0 && overlapPlayerVec.y >= 0) {
+                    else if (prevPlayerOverlapVec.x >= 0 && prevPlayerOverlapVec.y >= 0 && overlapPlayerVec.x >= 0 && overlapPlayerVec.y >= 0)
+                    {
                         const auto bp = true;
-                        playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
+                        // playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
                         playerEnt->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapPlayerVec.y : -overlapPlayerVec.y;
-                    }
-                    else
-                    { // // Only when prevOv of x & y are <= 0; So "corner collision" ??
-                       const auto bp = true;
-                    }
 
+                        if (m_game->debug())
+                        {
+                            createCollisionTileEntity(m_entityManager, tileEnt);
+                        }
+                    }
                     if (m_game->debug())
                     {
                         createCollisionAreaEntity(m_entityManager, playerCameFromRight, playerCameFromBottom, playerEnt, overlapPlayerVec);
@@ -569,7 +576,7 @@ void Scene_Play::sCollision()
                     const Vec2 explosToSourceRation = getTextureToSizeRatio(exolosionEntAni.animation.getSize(), sourceEntAni.animation.getSize());
                     expEntTransf.scale = explosToSourceRation;
 
-                    explosEnt->addComponent<CLifespan>(exolosionEntAni.animation.getAnimationLifespan() , m_currentFrame, false);
+                    explosEnt->addComponent<CLifespan>(exolosionEntAni.animation.getAnimationLifespan(), m_currentFrame, false);
 
                     tileEnt->destroy();
                 }
@@ -582,8 +589,8 @@ void Scene_Play::sCollision()
     // TODO: Don't let the player walk off the left side of the map
 }
 
-void Scene_Play::sActions() { /// TODO: Remove all these changes for now and implement later
-    
+void Scene_Play::sActions()
+{ /// TODO: Remove all these changes for now and implement later
 }
 
 void Scene_Play::sDoInput(const Action &action)
@@ -860,6 +867,22 @@ void Scene_Play::sRender()
         }
     }
 
+    if (m_drawGrid)
+    {
+        auto tempVari4 = view.getCenter();
+        sf::CircleShape circ(10);
+        circ.setPosition(view.getCenter());
+        circ.setOutlineColor(sf::Color::Red);
+        m_game->window().draw(circ);
+
+        sf::Text gridOnText(m_game->getAssets().getFont("byteSized2"), "GRID ON");
+        gridOnText.setCharacterSize(20);
+        gridOnText.setFillColor(sf::Color::White);
+        gridOnText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y});
+        m_game->window().draw(gridOnText);
+        drawGrid();
+    }
+
     // draw all Entity collision bounding boxes with a rectangle
     if (m_drawCollision)
     {
@@ -881,22 +904,6 @@ void Scene_Play::sRender()
                 m_game->window().draw(rect);
             }
         }
-    }
-
-    if (m_drawGrid)
-    {
-        auto tempVari4 = view.getCenter();
-        sf::CircleShape circ(10);
-        circ.setPosition(view.getCenter());
-        circ.setOutlineColor(sf::Color::Red);
-        m_game->window().draw(circ);
-
-        sf::Text gridOnText(m_game->getAssets().getFont("byteSized2"), "GRID ON");
-        gridOnText.setCharacterSize(20);
-        gridOnText.setFillColor(sf::Color::White);
-        gridOnText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y});
-        m_game->window().draw(gridOnText);
-        drawGrid();
     }
 
     if (m_game->debug())

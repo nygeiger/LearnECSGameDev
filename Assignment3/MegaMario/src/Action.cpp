@@ -26,10 +26,6 @@ const std::string Action::getTypeString() const {
     }
 }
 
-// std::string Action::toString() const
-// {
-//     return std::string(m_name + " " + m_type);
-// }
 std::string Action::toString() const
 {
     return std::string(m_name + " " + getTypeString());

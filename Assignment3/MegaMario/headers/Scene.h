@@ -8,7 +8,6 @@
 
 class GameEngine;
 
-// typedef std::map<int, std::string> ActionMap;
 typedef std::map<sf::Keyboard::Scancode, std::string> ActionMap;
 
 class Scene

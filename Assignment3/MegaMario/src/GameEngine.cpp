@@ -18,11 +18,6 @@ void GameEngine::init(const std::string &path)
     m_window.create(sf::VideoMode({1284, 768}), "Definitely not Mario");
     m_window.setFramerateLimit(60); /// Use SFML::Clock instead of Framerate limit?
 
-    // // ImGui::SFML::(m_window);
-
-    // // scale the imgui ui and text size by 2
-    // ImGui::GetStyle().ScaleAllSizes(2.0f);
-    // ImGui::GetIO().FontGlobalScale = 2.0f;
     sf::Font tempFont;
     changeScene("MENU", std::make_shared<Scene_Menu>(tempFont, this));
 }
@@ -94,7 +89,7 @@ void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene
     m_currentScene = sceneName;
 }
 
-void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make sure I'm using this funct right
+void GameEngine::sUserInput()
 {
     const auto &onClose = [this](const sf::Event::Closed &)
     {

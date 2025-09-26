@@ -74,7 +74,7 @@ namespace EntityType
 {
     static const std::string PLAYER = "player";
     static const std::string ENEMY = "enemy";
-    static const std::string TILE = "tile";
+    static const std::string TILE = "Tile";
     static const std::string DECORATION = "decoration";
     static const std::string BULLET = "bullet";
     static const std::string SPECIAL_WEAPON = "special_weapon";

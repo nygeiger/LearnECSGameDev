@@ -9,6 +9,7 @@ Texture Brick ../assets/textures/marioBrick.jpeg
 Texture floorBlock ../assets/textures/marioFloorBrick.png
 Texture TexQBlock ../assets/textures/questionBlocks.png
 Texture TexExplode ../assets/textures/explosionSheet.png
+Texture TexExplode2 ../assets/textures/explosion.png
 Texture Cloud1 ../assets/textures/marioCloud1.png
 Texture Cloud2 ../assets/textures/marioCloud2.png
 Texture Flag ../assets/textures/marioFlag.png
@@ -41,6 +42,8 @@ Animation Brick Brick 1 1
 Animation Block floorBlock 1 1
 Animation Question TexQBlock 3 12
 Animation Bullet TexBullet 1 0
+Animation Explosion TexExplode 11 5
+Animation Explosion2 TexExplode2 11 5
 
 /*
 - Animation Asset Specification (2): Account for animations within a collective sprite sheet (Texture "T" is a collection of related & unrelated sprites)
@@ -62,3 +65,4 @@ AnimationMap Jump MegaMan 1 4 6 0 10 7
 AnimationMap StandShoot MegaMan 1 4 2 1 10 7
 AnimationMap RunShoot MegaMan 3 4 3 1 10 7
 AnimationMap JumpShoot MegaMan 1 4 6 1 10 7
+// AnimationMap Explosion TexExplode 11 5 0 0 11 1

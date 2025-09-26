@@ -51,27 +51,33 @@ class Animation {
         const std::string& getName() const;
         const Vec2& getSize() const;
         sf::Sprite& getSprite(); //should this not be () const{}?
+        size_t getFramecount() const;
+        size_t getAnimationLifespan() const;
 
 };
 
 namespace AnimationType
 {
     /// @brief player animations
-    static const std::string STAND = "Stand";
-    static const std::string STAND_SHOOT = "StandShoot";
-    static const std::string RUN = "Run";
-    static const std::string RUN_SHOOT = "RunShoot";
-    static const std::string JUMP = "Jump";
-    static const std::string JUMP_SHOOT = "JumpShoot";
-    static const std::string SHOOT = "Shoot";
+    const std::string STAND = "Stand";
+    const std::string STAND_SHOOT = "StandShoot";
+    const std::string RUN = "Run";
+    const std::string RUN_SHOOT = "RunShoot";
+    const std::string JUMP = "Jump";
+    const std::string JUMP_SHOOT = "JumpShoot";
+    const std::string SHOOT = "Shoot";
 
     /// @brief tile animations
-    static const std::string BRICK = "Brick";
-    static const std::string BLOCK = "Block";
-    static const std::string QUESTION = "Question";
+    const std::string BRICK = "Brick";
+    const std::string BLOCK = "Block";
+    const std::string QUESTION = "Question";
+
+    /// @brief decoration animations
+    const std::string EXPLOSION = "Explosion";
+    const std::string EXPLOSION2 = "Explosion2";
 
     /// @brief enity animations
-    static const std::string BULLET = "Bullet";
+    const std::string BULLET = "Bullet";
 };
 
 #endif

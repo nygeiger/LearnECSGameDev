@@ -36,17 +36,11 @@ void Animation::update()
 {
     // add the speed variable to the current frame
 
-    if (hasEnded())
+    if (m_frameCount > 1)
     {
-        m_currentFrame = 0;
-    }
-
-    if ((m_frameCount > 1) && (m_currentFrame % m_speed == 0))
-    {
-        const size_t currentAniFrame = m_currentFrame / m_speed - 1;
-
-        if (m_frameCount < m_currentFrame) // TODO: Revaluate the purpose and logic of this conditional
-        {                                  // TODO: evaluate the purpose of hasEnded() and make sure not to invalidate it
+        if (m_currentFrame == 0 || m_currentFrame % m_speed == 0)
+        {
+            const size_t currentAniFrame = m_currentFrame / m_speed;
 
             if (m_onSpriteMap)
             {
@@ -67,8 +61,11 @@ void Animation::update()
                 m_sprite.setTextureRect({{static_cast<int>(std::floor(currentAniFrame) * m_size.x), 0}, {static_cast<int>(m_size.x), static_cast<int>(m_size.y)}});
             }
         }
+        m_currentFrame++;
+        if (hasEnded()) {
+            m_currentFrame = 0;
+        }
     }
-    m_currentFrame++;
 }
 
 const Vec2 &Animation::getSize() const
@@ -85,8 +82,19 @@ sf::Sprite &Animation::getSprite()
 {
     return m_sprite;
 }
+
+size_t Animation::getFramecount() const
+{
+    return m_frameCount;
+}
+
+size_t Animation::getAnimationLifespan() const
+{
+    return m_frameCount * m_speed;
+}
+
 bool Animation::hasEnded() const
 {
     // TODO: detect when animation has ended (last frame was played) and return true
-    return m_frameCount <= 1 || m_frameCount < m_currentFrame / static_cast<double>(m_speed); // TODO: double check logic
+    return m_frameCount <= 1 || m_frameCount <= m_currentFrame / static_cast<double>(m_speed); // TODO: double check logic
 }

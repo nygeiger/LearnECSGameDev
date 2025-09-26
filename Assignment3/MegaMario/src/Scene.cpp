@@ -11,7 +11,7 @@ void Scene::setPaused(bool paused)
 
 Vec2 Scene::getTextureToSizeRatio(const Vec2 startingSize, Vec2 desiredSize) const
 {
-    const Vec2 textToGridBlockRatio = {desiredSize.x / startingSize.x, desiredSize.y / startingSize.y};
+    const Vec2 textToGridBlockRatio(desiredSize.x / startingSize.x, desiredSize.y / startingSize.y);
     return textToGridBlockRatio;
 }
 

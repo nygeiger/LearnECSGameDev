@@ -106,7 +106,7 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
         const std::map sceneActionMap = currentScene()->getActionMap();
         if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
         {
-            currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::START));
+            currentScene()->sDoInput(Action(sceneActionMap.at(e.scancode), ActionType::START));
         }
 
         /// Only for debuging, don't bind key to anything else
@@ -121,7 +121,7 @@ void GameEngine::sUserInput() // mayber call it registerUserInput instead? Make 
         const std::map sceneActionMap = currentScene()->getActionMap();
         if (sceneActionMap.find(e.scancode) != sceneActionMap.end())
         {
-            currentScene()->sDoAction(Action(sceneActionMap.at(e.scancode), ActionType::END));
+            currentScene()->sDoInput(Action(sceneActionMap.at(e.scancode), ActionType::END));
         }
     };
 

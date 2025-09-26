@@ -29,10 +29,16 @@ class CTransform : public Component {
 
 class CLifespan : public Component {
     public :
-        int lifespan = 0;
-        int frameCreated = 0;
+        size_t lifespan = 0;
+        size_t frameCreated = 0;
+        bool fadeOut = false;
+        
+        /// @brief 
+        /// @param duration how long the entity should remain for
+        /// @param frame    the frame at which the entity was created
+        /// @param fo       if the entity's opacity should fade out
+        CLifespan(const int duration, const int frame, const bool fo = false) : lifespan(duration), frameCreated(frame), fadeOut(fo) {}
         CLifespan() = default;
-        CLifespan(const int duration, const int frame) : lifespan(duration), frameCreated(frame){}
 };
 
 class CInput : public Component {

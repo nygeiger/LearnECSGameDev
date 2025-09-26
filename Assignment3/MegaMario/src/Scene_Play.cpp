@@ -176,45 +176,65 @@ void Scene_Play::spawnPlayer()
     // be sure to destroy the dead player if you're respawning
 }
 
+// void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
+// {
+//     // TODO: this should spawn a bullet at (from) the given entity, going in the direction the entity is facing
+
+//     // only captures this, and entity
+//     auto spawnBulletLogic = [&]() -> void
+//     {
+//         const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
+//         const Vec2 tempSourceEntScale = entity->getComponent<CTransform>().scale;
+//         const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
+
+//         Vec2 bulletSpawnPos = sourceEntityLocation;
+//         bulletSpawnPos.x += entitySourceFaceRight ? 5 : -5;
+
+//         auto bullet = m_entityManager.addEntity(EntityType::BULLET);
+//         bullet->addComponent<CTransform>(bulletSpawnPos);
+//         bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
+//         bullet->addComponent<CLifespan>(ScenePlayUtil::BULLET_LIFESPAN, m_currentFrame);
+//         bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
+
+//         Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
+//         bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
+//         bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
+//     };
+
+//     if (entity->hasComponent<CActionFrameRecord>())
+//     {
+//         auto &enityActionFrameRecord = entity->getComponent<CActionFrameRecord>().actionFrameRecord;
+//         if (ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - enityActionFrameRecord[ScenePlayActions::SHOOT])
+//         {
+//             spawnBulletLogic();
+//             entity->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
+//         }
+//     }
+//     else
+//     {
+//         spawnBulletLogic();
+//         entity->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, m_currentFrame);
+//     }
+// }
+
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 {
     // TODO: this should spawn a bullet at (from) the given entity, going in the direction the entity is facing
+    const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
+    const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
 
-    // only captures this, and entity
-    auto spawnBulletLogic = [&]() -> void
-    {
-        const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
-        const Vec2 tempSourceEntScale = entity->getComponent<CTransform>().scale;
-        const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
+    Vec2 bulletSpawnPos = sourceEntityLocation;
+    bulletSpawnPos.x += entitySourceFaceRight ? 5 : -5;
 
-        Vec2 bulletSpawnPos = sourceEntityLocation;
-        bulletSpawnPos.x += entitySourceFaceRight ? 5 : -5;
+    auto bullet = m_entityManager.addEntity(EntityType::BULLET);
+    bullet->addComponent<CTransform>(bulletSpawnPos);
+    bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
+    bullet->addComponent<CLifespan>(ScenePlayUtil::BULLET_LIFESPAN, m_currentFrame);
+    bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
 
-        auto bullet = m_entityManager.addEntity(EntityType::BULLET);
-        bullet->addComponent<CTransform>(bulletSpawnPos);
-        bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
-        bullet->addComponent<CLifespan>(ScenePlayUtil::BULLET_LIFESPAN, m_currentFrame);
-        bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
-
-        Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
-        bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
-        bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
-    };
-
-    if (entity->hasComponent<CActionFrameRecord>())
-    {
-        auto &enityActionFrameRecord = entity->getComponent<CActionFrameRecord>().actionFrameRecord;
-        if (ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - enityActionFrameRecord[ScenePlayActions::SHOOT])
-        {
-            spawnBulletLogic();
-            entity->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
-        }
-    }
-    else
-    {
-        spawnBulletLogic();
-        entity->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, m_currentFrame);
-    }
+    Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
+    bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
+    bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
 }
 
 void Scene_Play::update()
@@ -224,6 +244,7 @@ void Scene_Play::update()
     if (!m_paused)
     {
         sMovement();
+        sActions();
         sLifespan();
         sCollision();
         // sAnimation();
@@ -590,7 +611,26 @@ void Scene_Play::sCollision()
 }
 
 void Scene_Play::sActions()
-{ /// TODO: Remove all these changes for now and implement later
+{
+
+    for (auto &playerEnt : m_entityManager.getEntities(EntityType::PLAYER))
+    {
+        if (playerEnt->hasComponent<CActionFrameRecord>())
+        {
+
+            auto &playerEntAFR = playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord;
+            const auto eOfPlayerAFT = playerEntAFR.end();
+
+            if (playerEntAFR.find(ScenePlayActions::SHOOT) != eOfPlayerAFT && playerEnt->getComponent<CInput>().canShoot)
+            {
+                if (ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - playerEntAFR[ScenePlayActions::SHOOT])
+                {
+                    spawnBullet(playerEnt);
+                    playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
+                }
+            }
+        }
+    }
 }
 
 void Scene_Play::sDoInput(const Action &action)
@@ -641,9 +681,20 @@ void Scene_Play::sDoInput(const Action &action)
         }
         else if (action.name() == ScenePlayActions::SHOOT)
         {
-            // playerEnt->addComponent<CState>(PlayerStates::SHOOT);
-            playerEnt->getComponent<CInput>().shoot = true;
-            spawnBullet(playerEnt);
+            playerEnt->getComponent<CInput>().shoot = true; // For Animation System
+
+            auto playerAFR = playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord; // For Animation System
+            if (playerEnt->hasComponent<CActionFrameRecord>())
+            {
+                if (playerAFR.find(ScenePlayActions::SHOOT) == playerAFR.end())
+                {
+                    playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = SIZE_MAX;
+                }
+            }
+            else
+            {
+                playerEnt->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, SIZE_MAX);
+            }
         }
     }
     else if (action.type() == ActionType::END)
@@ -663,7 +714,11 @@ void Scene_Play::sDoInput(const Action &action)
         }
         else if (action.name() == ScenePlayActions::SHOOT)
         {
-            playerEnt->getComponent<CInput>().shoot = false;
+            playerEnt->getComponent<CInput>().shoot = false; // For Animation System
+            if (playerEnt->hasComponent<CActionFrameRecord>())
+            {
+                playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord.erase(ScenePlayActions::SHOOT); // For Actions System
+            }
         }
 
         // // TODO: Goes here? Maybe in sMovement?
@@ -675,10 +730,10 @@ void Scene_Play::sDoInput(const Action &action)
         // }
     }
 
-    if (playerEnt->getComponent<CInput>().shoot && playerEnt->getComponent<CInput>().canShoot)
-    {
-        spawnBullet(playerEnt);
-    }
+    // if (playerEnt->getComponent<CInput>().shoot && playerEnt->getComponent<CInput>().canShoot)
+    // {
+    //     spawnBullet(playerEnt);
+    // }
 
     // TODO: Goes here? Maybe in sMovement?
     // TODO: Is this the best way to reset state to defualt?

@@ -89,7 +89,7 @@ namespace ScenePlayUtil
     const Vec2 BULLET_SIZE = {8.0f, 8.0f};
     const Vec2 BULLET_VELOCITY = {14.0f, 0.0f};
     const size_t BULLET_LIFESPAN = 90.0f;
-    const float SHOOT_FRAME_LIMIT = 6.0f;
+    const float SHOOT_FRAME_LIMIT = 12.0f;
 
     const Vec2 QUESTION_TILE_SIZE = GRID_SIZE/2;
     const Vec2 BRICK_TILE_SIZE = GRID_SIZE/2;

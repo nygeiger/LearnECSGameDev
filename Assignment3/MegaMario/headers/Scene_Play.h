@@ -16,14 +16,12 @@ class Scene_Play : public Scene
         std::string WEAPON;
     };
 
-    // std::shared_ptr<Entity> m_player;
     std::string m_levelPath;
     PlayerConfig m_playerConfig;
     bool m_drawTextures = true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;
     const Vec2 m_gridSize = {64, 64}; // TODO: All scenes should have this?
-    // const Vec2 m_gridSize = ScenePlayUtil::GRID_SIZE;
     sf::Text m_gridText;
 
     void init();

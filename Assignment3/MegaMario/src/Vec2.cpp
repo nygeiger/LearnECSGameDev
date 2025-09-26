@@ -4,7 +4,7 @@
 
 Vec2::Vec2(){};
 
-Vec2::Vec2(const float xin, const float yin) : x(xin), y(yin){} // pass by refrence?
+Vec2::Vec2(const float xin, const float yin) : x(xin), y(yin){}
 
 bool Vec2::operator==(const Vec2 & rhs) const {
     return (x == rhs.x && y == rhs.y);
@@ -60,7 +60,6 @@ void Vec2::operator=(const Vec2 & rhs){
 }
 
 float Vec2::dist(const Vec2 & rhs)const {
-    // with square root
     return sqrtf(((rhs.x - x) * (rhs.x - x)) + ((rhs.y - y) * (rhs.y - y)));
 }
 

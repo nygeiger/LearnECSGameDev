@@ -24,8 +24,6 @@ void Scene_Play::init(const std::string &levelPath)
     registerAction(sf::Keyboard::Scancode::T, ScenePlayActions::TOGGLE_TEXTURE);
     registerAction(sf::Keyboard::Scancode::C, ScenePlayActions::TOGGLE_COLLISION);
     registerAction(sf::Keyboard::Scancode::G, ScenePlayActions::TOGGLE_GRID);
-
-    // TODO: Register all other gameplay Actions
     registerAction(sf::Keyboard::Scancode::W, ScenePlayActions::UP);
     registerAction(sf::Keyboard::Scancode::A, ScenePlayActions::LEFT);
     registerAction(sf::Keyboard::Scancode::D, ScenePlayActions::RIGHT);
@@ -121,49 +119,13 @@ void Scene_Play::loadLevel(const std::string &fileName)
             std::getline(file, tempLine);
         }
     }
-
-    //  Note:   all of the code below is sample code which shows you how to set up
-    //          and use entities with the new syntax, it should be removed
-
     spawnPlayer();
-
-    // some sample entities
-    // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
-
-    // NOTE: Your final code should position the entity with the grid x,y position read from the file:
-    // brick->addComponent<CTransform>(gridToMidPixel(gridX, gridY, brick));
-
-    // auto question = m_entityManager.addEntity(EntityType::TILE);
-    // question->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::QUESTION), true);
-    // question->addComponent<CTransform>(Vec2(352, 480));
-    // const Vec2 questionTextureSize = question->getComponent<CAnimation>().animation.getSize();
-    // const Vec2 questionTextToGridBlockRatio = {m_gridSize.x / questionTextureSize.x, m_gridSize.y / questionTextureSize.y};
-    // question->getComponent<CTransform>().scale = questionTextToGridBlockRatio;
-    // question->addComponent<CBoundingBox>(questionTextureSize * questionTextToGridBlockRatio);
-    // const auto tempVari4 = questionTextureSize * questionTextToGridBlockRatio;
-    // const bool bp = true;
-
-    // NOTE: THIS IS INCREDIBLY IMPORTANT PLEASE READ THIS EXAMPLE
-    /* Components are now returned as refrences rather than pointers
-        If you do not specify a reference varibale type, it will COPY the component
-        Here's an example:
-
-        This will COPY the transform into the variable 'transform1' - it is INCORRECT
-        Any changes you make to transform1 will not be changed inside the entity
-        auto transform1 = entity->get<cTransform>()
-
-        This will REFRENCE the transform with the variable 'transform2' - it is CORRECT
-        Now any changes you make to transform2 will be changed inside the entity
-        auto& transform2 = entity->get<CTransform>()
-
-    */
-
-    // readLevelFromFile(fileName);
 }
 
 void Scene_Play::spawnPlayer()
 {
-    // here is a sple player enity which you can use to construct other entities
+    // TODO: be sure to addd the remaining components to the palyer
+    // be sure to destroy the dead player if you're respawning
     std::shared_ptr<Entity> playerEnt = player();
     playerEnt->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND), true);
     playerEnt->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
@@ -171,51 +133,7 @@ void Scene_Play::spawnPlayer()
     playerEnt->addComponent<CState>("STAND");
     playerEnt->addComponent<CInput>();
     playerEnt->addComponent<CGravity>(1);
-
-    // TODO: be sure to addd the remaining components to the palyer
-    // be sure to destroy the dead player if you're respawning
 }
-
-// void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
-// {
-//     // TODO: this should spawn a bullet at (from) the given entity, going in the direction the entity is facing
-
-//     // only captures this, and entity
-//     auto spawnBulletLogic = [&]() -> void
-//     {
-//         const Vec2 sourceEntityLocation = entity->getComponent<CTransform>().pos;
-//         const Vec2 tempSourceEntScale = entity->getComponent<CTransform>().scale;
-//         const bool entitySourceFaceRight = (entity->getComponent<CTransform>().scale.x >= 0);
-
-//         Vec2 bulletSpawnPos = sourceEntityLocation;
-//         bulletSpawnPos.x += entitySourceFaceRight ? 5 : -5;
-
-//         auto bullet = m_entityManager.addEntity(EntityType::BULLET);
-//         bullet->addComponent<CTransform>(bulletSpawnPos);
-//         bullet->getComponent<CTransform>().velocity = entitySourceFaceRight ? ScenePlayUtil::BULLET_VELOCITY : ScenePlayUtil::BULLET_VELOCITY * -1;
-//         bullet->addComponent<CLifespan>(ScenePlayUtil::BULLET_LIFESPAN, m_currentFrame);
-//         bullet->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::BULLET), false);
-
-//         Vec2 bulletAniToSizeRation = getTextureToSizeRatio(bullet->getComponent<CAnimation>().animation.getSize(), ScenePlayUtil::BULLET_SIZE);
-//         bullet->getComponent<CTransform>().scale = bulletAniToSizeRation;
-//         bullet->addComponent<CBoundingBox>(bullet->getComponent<CAnimation>().animation.getSize() * bulletAniToSizeRation);
-//     };
-
-//     if (entity->hasComponent<CActionFrameRecord>())
-//     {
-//         auto &enityActionFrameRecord = entity->getComponent<CActionFrameRecord>().actionFrameRecord;
-//         if (ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - enityActionFrameRecord[ScenePlayActions::SHOOT])
-//         {
-//             spawnBulletLogic();
-//             entity->getComponent<CActionFrameRecord>().actionFrameRecord[ScenePlayActions::SHOOT] = m_currentFrame;
-//         }
-//     }
-//     else
-//     {
-//         spawnBulletLogic();
-//         entity->addComponent<CActionFrameRecord>(ScenePlayActions::SHOOT, m_currentFrame);
-//     }
-// }
 
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 {
@@ -272,109 +190,83 @@ void Scene_Play::sMovement()
     // NOTE: Setting an entity's scale.x to -1/1 will make it face to the left/right
 
     const float playerLowestPoint = 12 * m_gridSize.y;
-
     const float xMaxSpeed = 7.0f;
     const float xMaxSpeedInv = xMaxSpeed * -1;
     const float yMaxSpeed = 25.0f;
     const float yMaxSpeedInv = yMaxSpeed * -1;
     const float runSpeed = 4.75;
 
-    // auto playerEnt = player();
-    // auto &playerInput = playerEnt->getComponent<CInput>();
-    // auto &playerPos = playerEnt->getComponent<CTransform>().pos;
-
-    /// TODO: Move player logic into entMan loop? Since different entities may need cust logic it'd be the logical place to be
-    // if (playerInput.left)
-    // {
-    //     playerEnt->getComponent<CTransform>().velocity.x = -runSpeed;
-    // }
-    // else if (playerInput.right)
-    // {
-    //     playerEnt->getComponent<CTransform>().velocity.x = runSpeed;
-    // }
-    // else
-    // {
-    //     playerEnt->getComponent<CTransform>().velocity.x = 0;
-    // }
-
-    // if (playerInput.canJump && playerInput.up)
-    // {
-    //     playerEnt->getComponent<CTransform>().velocity.y -= 17; // Delete "playerVelocity" Vec2 and just do this?
-    //     auto &playerInput = playerEnt->getComponent<CInput>().canJump = false;
-    //     playerEnt->addComponent<CState>(PlayerStates::JUMP);
-    //     playerEnt->addComponent<CGravity>(1);
-    // }
-
-    // if (playerPos.y > playerLowestPoint) {
-    //     playerEnt->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
-    // }
-
-    // if (playerPos.x - playerEnt->getComponent<CTransform>().velocity.x <= 0 &&  playerEnt->getComponent<CTransform>().velocity.x < 0) {
-    //     playerEnt->getComponent<CTransform>().velocity.x = 0;
-    // }
-
-    for (auto e : m_entityManager.getEntities())
+    for (auto e : m_entityManager.getEntities()) // Thorugh all Ents or just those that move?
     {
-        if (e->tag() == EntityType::PLAYER)
+        if (e->hasComponent<CTransform>())
         {
-            auto &playerInput = e->getComponent<CInput>();
-            auto &playerPos = e->getComponent<CTransform>().pos;
-            if (playerInput.left)
+            /// ##### Entity Gravity Logic #####
+            if (e->hasComponent<CGravity>())
             {
-                e->getComponent<CTransform>().velocity.x = -runSpeed;
+                e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
             }
-            else if (playerInput.right)
-            {
-                e->getComponent<CTransform>().velocity.x = runSpeed;
-            }
-            else
-            {
-                e->getComponent<CTransform>().velocity.x = 0;
-            }
+            /// ##### End Entity Gravity Logic #####
 
-            if (playerInput.canJump && playerInput.up)
+            /// ##### Player Entity Specific Logic #####
+            if (e->tag() == EntityType::PLAYER)
             {
-                e->getComponent<CTransform>().velocity.y = -17; // Delete "playerVelocity" Vec2 and just do this?
-                auto &playerInput = e->getComponent<CInput>().canJump = false;
-                e->addComponent<CState>(PlayerStates::JUMP);
-                e->addComponent<CGravity>(1);
-            }
+                auto &playerInput = e->getComponent<CInput>();
+                auto &playerPos = e->getComponent<CTransform>().pos;
+                if (playerInput.left)
+                {
+                    e->getComponent<CTransform>().velocity.x = -runSpeed;
+                }
+                else if (playerInput.right)
+                {
+                    e->getComponent<CTransform>().velocity.x = runSpeed;
+                }
+                else
+                {
+                    e->getComponent<CTransform>().velocity.x = 0;
+                }
 
-            if (playerPos.y > playerLowestPoint)
-            {
-                e->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
-            }
+                if (playerInput.canJump && playerInput.up)
+                {
+                    e->getComponent<CTransform>().velocity.y = -17;
+                    auto &playerInput = e->getComponent<CInput>().canJump = false;
+                    e->addComponent<CState>(PlayerStates::JUMP);
+                    e->addComponent<CGravity>(1);
+                }
 
-            if (playerPos.x - e->getComponent<CTransform>().velocity.x <= 0 && e->getComponent<CTransform>().velocity.x < 0)
-            {
-                e->getComponent<CTransform>().velocity.x = 0;
+                if (playerPos.y > playerLowestPoint)
+                {
+                    e->addComponent<CTransform>(Vec2(m_game->window().getDefaultView().getCenter().x, m_game->window().getDefaultView().getCenter().y));
+                }
+
+                if (playerPos.x - e->getComponent<CTransform>().velocity.x <= 0 && e->getComponent<CTransform>().velocity.x < 0)
+                {
+                    e->getComponent<CTransform>().velocity.x = 0;
+                }
+
+                // if entity is moving faster than max speed in any direction
+                // set the speed to the max
+                if (e->getComponent<CTransform>().velocity.y > yMaxSpeed)
+                {
+                    e->getComponent<CTransform>().velocity.y = yMaxSpeed;
+                }
+                if (e->getComponent<CTransform>().velocity.x > xMaxSpeed)
+                {
+                    e->getComponent<CTransform>().velocity.x = xMaxSpeed;
+                }
+                if (e->getComponent<CTransform>().velocity.y < yMaxSpeedInv)
+                {
+                    e->getComponent<CTransform>().velocity.y = yMaxSpeedInv;
+                }
+                if (e->getComponent<CTransform>().velocity.x < xMaxSpeedInv)
+                {
+                    e->getComponent<CTransform>().velocity.x = xMaxSpeedInv;
+                }
             }
+            /// ##### End Player Entity Specific Logic #####
+
+            e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
+            e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
         }
-        if (e->hasComponent<CGravity>())
-        {
-            e->getComponent<CTransform>().velocity.y += e->getComponent<CGravity>().gravity;
-            // if player is moving faster than max speed in any direction
-            // set the speed of the player to the max
-
-            if (e->getComponent<CTransform>().velocity.y > yMaxSpeed)
-            {
-                e->getComponent<CTransform>().velocity.y = yMaxSpeed;
-            }
-            if (e->getComponent<CTransform>().velocity.x > xMaxSpeed)
-            {
-                e->getComponent<CTransform>().velocity.x = xMaxSpeed;
-            }
-            if (e->getComponent<CTransform>().velocity.y < yMaxSpeedInv)
-            {
-                e->getComponent<CTransform>().velocity.y = yMaxSpeedInv;
-            }
-            if (e->getComponent<CTransform>().velocity.x < xMaxSpeedInv)
-            {
-                e->getComponent<CTransform>().velocity.x = xMaxSpeedInv;
-            }
-        }
-        e->getComponent<CTransform>().prevPos = e->getComponent<CTransform>().pos;
-        e->getComponent<CTransform>().pos += e->getComponent<CTransform>().velocity;
     }
 }
 
@@ -395,16 +287,13 @@ void Scene_Play::sLifespan()
         if (entity->hasComponent<CLifespan>())
         {
             auto &entityCLifespan = entity->getComponent<CLifespan>();
-            auto reaminingLifespan = entityCLifespan.lifespan - (m_currentFrame - entityCLifespan.frameCreated);
-            // const int currentDuration = m_currentFrame - entityCLifespan.frameCreated;
-            // if (currentDuration >= entityCLifespan.lifespan)
+            const size_t reaminingLifespan = entityCLifespan.lifespan - (m_currentFrame - entityCLifespan.frameCreated);
             if (reaminingLifespan <= 0)
             {
                 entity->destroy();
             }
             else if (entityCLifespan.fadeOut)
             {
-                // const float remLifeRatio = currentDuration / entityCLifespan.lifespan;
                 const float remLifeRatio = reaminingLifespan / static_cast<float>(entityCLifespan.lifespan);
                 const float opacityLevel = 255 * remLifeRatio;
 
@@ -417,7 +306,7 @@ void Scene_Play::sLifespan()
 }
 
 /**
- * Helper function only used to help debug during collision development
+ * Helper functions only used to help debug during collision development
  *currently only works with one moving and one stationary object
  */
 void createCollisionAreaEntity(EntityManager &entityManager, const bool &playerCameFromRight, const bool &playerCameFromBottom, std::shared_ptr<Entity> movingEnt, const Vec2 &overlapVec)
@@ -435,6 +324,9 @@ void createCollisionTileEntity(EntityManager &entityManager, std::shared_ptr<Ent
     collisionVisualEnt->addComponent<CTransform>(tileEnt->getComponent<CTransform>());
     collisionVisualEnt->addComponent<CBoundingBox>(tileEnt->getComponent<CBoundingBox>());
 }
+/**
+ * Collision Helper Function End
+ */
 
 void Scene_Play::sCollision()
 {
@@ -604,10 +496,6 @@ void Scene_Play::sCollision()
             }
         }
     }
-
-    // TODO: Check to see if the player has fallen down a hole (y > height())
-
-    // TODO: Don't let the player walk off the left side of the map
 }
 
 void Scene_Play::sActions()
@@ -714,29 +602,10 @@ void Scene_Play::sDoInput(const Action &action)
         }
         else if (action.name() == ScenePlayActions::SHOOT)
         {
-            playerEnt->getComponent<CInput>().shoot = false; // For Animation System
-        //     if (playerEnt->hasComponent<CActionFrameRecord>())
-        //     {
-        //         playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord.erase(ScenePlayActions::SHOOT); // For Actions System
-        //     }
+            playerEnt->getComponent<CInput>().shoot = false;
         }
-
-        // // TODO: Goes here? Maybe in sMovement?
-        // // TODO: Is this the best way to reset state to defualt?
-        // if (!playerEnt->getComponent<CInput>().right && !playerEnt->getComponent<CInput>().left &&
-        //     !playerEnt->getComponent<CInput>().up && !playerEnt->getComponent<CInput>().shoot)
-        // {
-        //     playerEnt->addComponent<CState>().state = PlayerStates::STAND;
-        // }
     }
 
-    // if (playerEnt->getComponent<CInput>().shoot && playerEnt->getComponent<CInput>().canShoot)
-    // {
-    //     spawnBullet(playerEnt);
-    // }
-
-    // TODO: Goes here? Maybe in sMovement?
-    // TODO: Is this the best way to reset state to defualt?
     if (!playerEnt->getComponent<CInput>().right && !playerEnt->getComponent<CInput>().left &&
         !playerEnt->getComponent<CInput>().up && !playerEnt->getComponent<CInput>().shoot)
     {
@@ -774,7 +643,6 @@ void Scene_Play::sAnimation()
         if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN &&
             (playerAFR.find(ScenePlayActions::SHOOT) == playerAFR.end() || ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - playerAFR.at(ScenePlayActions::SHOOT)))
         {
-            // player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::RUN_SHOOT : AnimationType::RUN), true);
             player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
         }
         else if (playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND)
@@ -804,31 +672,6 @@ void Scene_Play::sAnimation()
             player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP_SHOOT), true);
         }
     }
-    // if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN)
-    // {
-    //     // player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::RUN_SHOOT : AnimationType::RUN), true);
-    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);
-    //     const bool bp = true;
-    // }
-    // else if (playerInput.shoot && (playerState == PlayerStates::RUN) && (playerAnimationName != AnimationType::RUN_SHOOT))
-    // {
-    //     std::cout << "Adding Shoot Animation" << std::endl;
-    //     const auto tempAni = m_game->getAssets().getAnimation(AnimationType::RUN_SHOOT);
-    //     const auto tempCAni = CAnimation(tempAni, true);
-    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN_SHOOT), true);
-    // }
-    // else if (playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND)
-    // {
-    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::STAND_SHOOT : AnimationType::STAND), true);
-    // }
-    // else if (playerInput.shoot && playerState == PlayerStates::STAND && playerAnimationName != AnimationType::STAND_SHOOT)
-    // {
-    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::STAND_SHOOT), true);
-    // }
-    // else if (playerState == PlayerStates::JUMP && playerAnimationName != AnimationType::JUMP)
-    // {
-    //     player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
-    // }
 
     // Reflect Texture so that the texture faces where the player entity is moving
     if (player()->getComponent<CTransform>().velocity.x < 0 && player()->getComponent<CTransform>().scale.x > 0 || player()->getComponent<CTransform>().velocity.x > 0 && player()->getComponent<CTransform>().scale.x < 0)
@@ -843,46 +686,6 @@ void Scene_Play::onEnd()
     //          use m_game.changeScene(correct params);
     m_game->changeScene();
 }
-
-// void Scene_Play::sGUI() {
-//     ImGui::Begin("Scene Properties");
-
-//     if(ImGui::BeginTabBar("MyTabBar")) {
-//         if (ImGui::BeginTabItem("Actions")) {
-//             for (const auto& [key, name] : getActionmap()) {
-//                 std::string ss = "START##" + name;
-//                 std::string se = "END##" + name;
-
-//                 if (ImGui::Button(ss.c_str())) {
-//                     doAction(Action(name, "START"));
-//                 }
-//                 ImGui::SameLine();
-//                 if (ImGui::Button(se.c_str())) {
-//                     doAction(Action(name, "END"));
-//                 }
-//                 ImGui::SameLine();
-//                 ImGui::Text("%s", name.c_str());
-//             }
-//             ImGui::EndTabItem();
-//         }
-
-//         if (ImGui::BeginTabItem("Assets")) {
-//             if (ImGui::CollapsingHeader("Animations", ImGuiTreeNode)) {
-//                 ImGui::Indent();
-//                 int count = 0;
-//                 for (const auto& [name, anim] : m_game.assets().) {
-//                     count++;
-//                     ImGui::ImageButton(((Animation)anim).getSprite())
-//                     if ((count % 6) !- 0 && count != m_game.assets)
-//                 }
-//                 Im::GuiUnindent();
-//             }
-//             ImGui::EndTabItem();
-//         }
-//         ImGui::EndTabBar();
-//     }
-//     ImGui::End();
-// }
 
 void Scene_Play::sRender()
 {

@@ -621,7 +621,7 @@ void Scene_Play::sActions()
             auto &playerEntAFR = playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord;
             const auto eOfPlayerAFT = playerEntAFR.end();
 
-            if (playerEntAFR.find(ScenePlayActions::SHOOT) != eOfPlayerAFT && playerEnt->getComponent<CInput>().canShoot)
+            if (playerEntAFR.find(ScenePlayActions::SHOOT) != eOfPlayerAFT && playerEnt->getComponent<CInput>().canShoot && playerEnt->getComponent<CInput>().shoot)
             {
                 if (ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - playerEntAFR[ScenePlayActions::SHOOT])
                 {
@@ -715,10 +715,10 @@ void Scene_Play::sDoInput(const Action &action)
         else if (action.name() == ScenePlayActions::SHOOT)
         {
             playerEnt->getComponent<CInput>().shoot = false; // For Animation System
-            if (playerEnt->hasComponent<CActionFrameRecord>())
-            {
-                playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord.erase(ScenePlayActions::SHOOT); // For Actions System
-            }
+        //     if (playerEnt->hasComponent<CActionFrameRecord>())
+        //     {
+        //         playerEnt->getComponent<CActionFrameRecord>().actionFrameRecord.erase(ScenePlayActions::SHOOT); // For Actions System
+        //     }
         }
 
         // // TODO: Goes here? Maybe in sMovement?
@@ -772,7 +772,7 @@ void Scene_Play::sAnimation()
     if (!playerInput.shoot)
     {
         if (playerState == PlayerStates::RUN && playerAnimationName != AnimationType::RUN &&
-            (playerAFR.find(ScenePlayActions::SHOOT) == playerAFR.end() || 30.0f <= m_currentFrame - playerAFR.at(ScenePlayActions::SHOOT)))
+            (playerAFR.find(ScenePlayActions::SHOOT) == playerAFR.end() || ScenePlayUtil::SHOOT_FRAME_LIMIT <= m_currentFrame - playerAFR.at(ScenePlayActions::SHOOT)))
         {
             // player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(playerInput.shoot ? AnimationType::RUN_SHOOT : AnimationType::RUN), true);
             player()->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::RUN), true);

@@ -72,12 +72,20 @@ void Scene_Menu::init()
     block->addComponent<CTransform>(Vec2((9 * 64) + 32, (9 * 64) - 32));
     const int gridBlockSize = 64;
     const Vec2 textSize = block->getComponent<CAnimation>().animation.getSize();
-    const Vec2 textToGridBlockRatio = {64 / block->getComponent<CAnimation>().animation.getSize().x, 64 / block->getComponent<CAnimation>().animation.getSize().y};
+    const Vec2 textToGridBlockRatio(64 / block->getComponent<CAnimation>().animation.getSize().x, 64 / block->getComponent<CAnimation>().animation.getSize().y);
     block->getComponent<CTransform>().scale = textToGridBlockRatio;
 
     auto jumpManBlock = m_entityManager.addEntity(EntityType::TILE);
     jumpManBlock->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::JUMP), true);
     jumpManBlock->addComponent<CTransform>(Vec2(1280 / 2 + 90, 768 / 2 - 64));
+
+    auto explosAni = m_entityManager.addEntity(EntityType::DECORATION);
+    explosAni->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::EXPLOSION), true);
+    explosAni->addComponent<CTransform>(Vec2(1280 / 2 + 154, 768 / 2 - 64));
+
+    auto explosAni2 = m_entityManager.addEntity(EntityType::DECORATION);
+    explosAni2->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::EXPLOSION2), true);
+    explosAni2->addComponent<CTransform>(Vec2(1280 / 2 + 184, 768 / 2 - 94));
 }
 
 void Scene_Menu::update()
@@ -91,7 +99,7 @@ void Scene_Menu::onEnd()
     m_game->window().close();
 }
 
-void Scene_Menu::sDoAction(const Action &action)
+void Scene_Menu::sDoInput(const Action &action)
 {
     if (action.type() == ActionType::START)
     {

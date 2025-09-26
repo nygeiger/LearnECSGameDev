@@ -23,6 +23,7 @@ class Scene_Play : public Scene
     bool m_drawCollision = false;
     bool m_drawGrid = false;
     const Vec2 m_gridSize = {64, 64}; // TODO: All scenes should have this?
+    // const Vec2 m_gridSize = ScenePlayUtil::GRID_SIZE;
     sf::Text m_gridText;
 
     void init();
@@ -41,7 +42,8 @@ class Scene_Play : public Scene
     void sEnemySpawner();
     void sCollision();
     void sRender();
-    void sDoAction(const Action &action);
+    void sDoInput(const Action &action);
+    void sActions();
     void sDebug();
     void sLifespan();
     /// TODO: State System???
@@ -81,12 +83,16 @@ namespace PlayerStates
 
 namespace ScenePlayUtil
 {
-    // static const Vec2 GRID_SIZE = {64, 64};
+    static const Vec2 GRID_SIZE = {64, 64};
 
     /// @brief Bullet utils
     const Vec2 BULLET_SIZE = {8.0f, 8.0f};
     const Vec2 BULLET_VELOCITY = {14.0f, 0.0f};
+    const size_t BULLET_LIFESPAN = 90.0f;
     const float SHOOT_FRAME_LIMIT = 6.0f;
+
+    const Vec2 QUESTION_TILE_SIZE = GRID_SIZE/2;
+    const Vec2 BRICK_TILE_SIZE = GRID_SIZE/2;
 }
 
 #endif

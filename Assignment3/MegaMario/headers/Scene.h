@@ -30,7 +30,7 @@ public:
     Scene(GameEngine *gameEngine);
 
     virtual void update() = 0;
-    virtual void sDoAction(const Action &action) = 0;
+    virtual void sDoInput(const Action &action) = 0;
     void registerAction(sf::Keyboard::Scancode inputKey, const std::string &actionName);
     virtual void sRender() = 0;
 

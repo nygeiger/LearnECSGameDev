@@ -24,7 +24,7 @@ class Scene_Menu : public Scene {
         void update();
         void onEnd();
         // void registerAction(sf::Keyboard::Scancode inputKey, SceneMenuActions actionName);
-        void sDoAction(const Action& action);
+        void sDoInput(const Action& action);
         void drawLine(const Vec2 &p1, const Vec2 &p2) const; // TODO: dlete
         void drawGrid() const;
 

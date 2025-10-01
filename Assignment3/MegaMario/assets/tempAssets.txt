@@ -6,7 +6,7 @@
 
 Texture TexBullet ../assets/textures/mmanBullet.png
 Texture Brick ../assets/textures/marioBrick.jpeg
-Texture floorBlock ../assets/textures/marioFloorBrick.png
+Texture FloorBlock ../assets/textures/marioFloorBrick.png
 Texture TexQBlock ../assets/textures/questionBlocks.png
 Texture TexExplode ../assets/textures/explosionSheet.png
 Texture TexExplode2 ../assets/textures/explosion.png
@@ -39,11 +39,14 @@ Font byteSized2 ../assets/fonts/gamtex/Gamtex.ttf
 */
 
 Animation Brick Brick 1 1
-Animation Block floorBlock 1 1
+Animation Block FloorBlock 1 1
 Animation Question TexQBlock 3 12
 Animation Bullet TexBullet 1 0
 Animation Explosion TexExplode 11 5
 Animation Explosion2 TexExplode2 11 5
+Animation FlagPole FlagPole 1 1
+Animation FlagPole FlagPole 1 1
+Animation Flag Flag 1 1
 
 /*
 - Animation Asset Specification (2): Account for animations within a collective sprite sheet (Texture "T" is a collection of related & unrelated sprites)

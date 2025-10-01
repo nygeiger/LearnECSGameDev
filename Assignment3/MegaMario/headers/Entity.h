@@ -72,14 +72,16 @@ public:
 
 namespace EntityType
 {
-    static const std::string PLAYER = "player";
-    static const std::string ENEMY = "enemy";
-    static const std::string TILE = "Tile";
-    static const std::string DECORATION = "decoration";
-    static const std::string BULLET = "bullet";
-    static const std::string SPECIAL_WEAPON = "special_weapon";
-    static const std::string SMALL_ENEMY = "small_enemy";
-    static const std::string COLLISION_VISUAL = "collision_visual";
+    const std::string PLAYER = "player";
+    const std::string ENEMY = "enemy";
+    const std::string FLAG = "flag";
+    const std::string FLAG_POLE = "flag_pole";
+    const std::string TILE = "Tile";
+    const std::string DECORATION = "decoration";
+    const std::string BULLET = "bullet";
+    const std::string SPECIAL_WEAPON = "special_weapon";
+    const std::string SMALL_ENEMY = "small_enemy";
+    const std::string COLLISION_VISUAL = "collision_visual";
 };
 
 #endif

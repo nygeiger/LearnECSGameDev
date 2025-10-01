@@ -71,6 +71,8 @@ namespace AnimationType
     const std::string BRICK = "Brick";
     const std::string BLOCK = "Block";
     const std::string QUESTION = "Question";
+    const std::string FLAG = "Flag";
+    const std::string FLAGPOLE = "FlagPole";
 
     /// @brief decoration animations
     const std::string EXPLOSION = "Explosion";

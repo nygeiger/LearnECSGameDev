@@ -1,23 +1,35 @@
-Tile Block 0 0
-Tile Block 0 0
-Tile Block 0 0
-Tile Block 0 0
-
-
 Tile Block 0 10
 Tile Block 1 10
 Tile Block 2 10
 Tile Block 3 10
+
 Tile Block 4 10
+Tile Brick 4.25 7
+
 Tile Block 5 10
+Tile Question 4.75 7
+Tile Brick 5.25 7
+
 Tile Block 6 10
+Tile Question 5.75 7
+Tile Question 6.25 7
+
 Tile Block 7 10
+Tile Brick 6.75 7
+
 Tile Block 8 10
 Tile Block 9 10
 Tile Block 10 10
+Tile Block 10 9
 Tile Block 11 10
+Tile Block 11 9
+Tile Block 11 8
+
 Tile Block 14 10
+Tile Block 14 9
+Tile Block 14 8
 Tile Block 15 10
+Tile Block 15 9
 Tile Block 16 10
 Tile Block 17 10
 Tile Block 18 10
@@ -29,8 +41,9 @@ Tile Block 23 10
 Tile Block 24 10
 Tile Block 25 10
 Tile Block 26 10
-Tile Block 27 10
-Tile Block 28 10
+Tile Block 26 9
+Tile Block 29 8
+Tile Block 28 8
 Tile Block 29 10
 Tile Block 30 10
 Tile Block 31 10

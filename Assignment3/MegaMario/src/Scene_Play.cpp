@@ -113,6 +113,53 @@ void Scene_Play::loadLevel(const std::string &fileName)
                 tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
             }
         }
+        else if (lineHeader == "Flag")
+        {
+            auto tile = m_entityManager.addEntity(EntityType::FLAG);
+            std::string animationName;
+            file >> animationName;
+
+            if (animationName == AnimationType::FLAG)
+            {
+                float gx, gy;
+                file >> gx >> gy;
+
+                tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), true);
+                tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+                // tile->addComponent<CTransform>(Vec2(gx, gy));
+
+                const Vec2 &textureSize = tile->getComponent<CAnimation>().animation.getSize();
+                const Vec2 textToGridBlockRatio = getTextureToSizeRatio(textureSize, ScenePlayUtil::FLAG_TILE_SIZE);
+                tile->getComponent<CTransform>().scale = textToGridBlockRatio;
+                tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
+                auto newTextSize = textureSize * textToGridBlockRatio;
+                auto tempVari = (int)newTextSize.x % 64;
+                auto tempVar = (int)newTextSize.y % 64;
+                // tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+            }
+        }
+        else if (lineHeader == "FlagPole")
+        {
+
+            auto tile = m_entityManager.addEntity(EntityType::FLAG_POLE);
+            std::string animationName;
+            file >> animationName;
+
+            if (animationName == AnimationType::FLAGPOLE)
+            {
+                float gx, gy;
+                file >> gx >> gy;
+
+                tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), true);
+                tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+
+                const Vec2 &textureSize = tile->getComponent<CAnimation>().animation.getSize();
+                const Vec2 textToGridBlockRatio = getTextureToSizeRatio(textureSize, ScenePlayUtil::FLAGPOLE_TILE_SIZE);
+                tile->getComponent<CTransform>().scale = textToGridBlockRatio;
+                tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
+                auto newTextSize = textureSize * textToGridBlockRatio;
+            }
+        }
         else
         {
             std::string tempLine;
@@ -309,6 +356,7 @@ void Scene_Play::sLifespan()
  * Helper functions only used to help debug during collision development
  *currently only works with one moving and one stationary object
  */
+/// @brief To create an entity with the location and size of the collision area of two entities
 void createCollisionAreaEntity(EntityManager &entityManager, const bool &playerCameFromRight, const bool &playerCameFromBottom, std::shared_ptr<Entity> movingEnt, const Vec2 &overlapVec)
 {
     auto collisionVisualEnt = entityManager.addEntity(EntityType::COLLISION_VISUAL);
@@ -318,6 +366,7 @@ void createCollisionAreaEntity(EntityManager &entityManager, const bool &playerC
     collisionVisualEnt->addComponent<CBoundingBox>(overlapVec);
 }
 
+/// @brief To highlight the tile entity specified (by created an entity overlapping the tiles outline)
 void createCollisionTileEntity(EntityManager &entityManager, std::shared_ptr<Entity> tileEnt)
 {
     auto collisionVisualEnt = entityManager.addEntity(EntityType::COLLISION_VISUAL);
@@ -346,6 +395,8 @@ void Scene_Play::sCollision()
     //      This will be used in the Animation system
 
     /// TODO: Logic to make sure edge cases are considered ex: high velocity (although it's limited in each direction)
+
+    /// @brief Check for Tile x Player Collisions
     auto playerEnt = player();
     for (auto &tileEnt : m_entityManager.getEntities(EntityType::TILE))
     {
@@ -412,12 +463,23 @@ void Scene_Play::sCollision()
                         {
                             playerEnt->getComponent<CTransform>().velocity.y = 0;
                             playerEnt->getComponent<CInput>().canJump = true;
-                            playerEnt->addComponent<CState>(PlayerStates::STAND);
+                            // playerEnt->addComponent<CState>(PlayerStates::STAND);
                         }
                     }
                     else if (prevPlayerOverlapVec.x <= 0 && prevPlayerOverlapVec.y > 0) // Entities collided via x-axis i.e. Megaman running into pipe
                     {
                         playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
+                    }
+                    else if (prevPlayerOverlapVec.x >= 0 && prevPlayerOverlapVec.y >= 0 && overlapPlayerVec.x >= 0 && overlapPlayerVec.y >= 0)
+                    {
+                        const auto bp = true;
+                        // playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
+                        playerEnt->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapPlayerVec.y : -overlapPlayerVec.y;
+
+                        if (m_game->debug())
+                        {
+                            createCollisionTileEntity(m_entityManager, tileEnt);
+                        }
                     }
                     else
                     { // // Only when prevOv of x & y are <= 0; So "corner collision" ??
@@ -437,21 +499,44 @@ void Scene_Play::sCollision()
                     {
                         if (playerCameFromBottom)
                         {
-                            tileEnt->destroy();
                             playerEnt->getComponent<CTransform>().velocity.y = 0;
                             playerEnt->getComponent<CTransform>().pos.y += overlapPlayerVec.y;
+
+                            const CTransform sourceEntTransf = tileEnt->getComponent<CTransform>();
+                            const CAnimation sourceEntAni = tileEnt->getComponent<CAnimation>();
+
+                            auto explosEnt = m_entityManager.addEntity(EntityType::DECORATION);
+                            CTransform &expEntTransf = explosEnt->addComponent<CTransform>(sourceEntTransf.pos);
+
+                            const auto &exolosionEntAni = explosEnt->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::EXPLOSION), false);
+                            const Vec2 explosToSourceRation = getTextureToSizeRatio(exolosionEntAni.animation.getSize(), sourceEntAni.animation.getSize());
+                            expEntTransf.scale = explosToSourceRation;
+
+                            explosEnt->addComponent<CLifespan>(exolosionEntAni.animation.getAnimationLifespan(), m_currentFrame, false);
+                            tileEnt->destroy();
                         }
                         else
                         {
                             playerEnt->getComponent<CTransform>().velocity.y = 0;
                             playerEnt->getComponent<CTransform>().pos.y -= overlapPlayerVec.y;
                             playerEnt->getComponent<CInput>().canJump = true;
-                            playerEnt->addComponent<CState>(PlayerStates::STAND);
+                            // playerEnt->addComponent<CState>(PlayerStates::STAND);
                         }
                     }
                     else if (prevPlayerOverlapVec.x <= 0 && prevPlayerOverlapVec.y > 0)
                     {
                         playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
+                    }
+                    else if (prevPlayerOverlapVec.x >= 0 && prevPlayerOverlapVec.y >= 0 && overlapPlayerVec.x >= 0 && overlapPlayerVec.y >= 0)
+                    {
+                        const auto bp = true;
+                        // playerEnt->getComponent<CTransform>().pos.x += (playerCameFromRight) ? overlapPlayerVec.x : -overlapPlayerVec.x;
+                        playerEnt->getComponent<CTransform>().pos.y += (playerCameFromBottom) ? overlapPlayerVec.y : -overlapPlayerVec.y;
+
+                        if (m_game->debug())
+                        {
+                            createCollisionTileEntity(m_entityManager, tileEnt);
+                        }
                     }
                     else
                     { // Only when prevOv of x & y are <= 0; So corner collision ??
@@ -465,6 +550,7 @@ void Scene_Play::sCollision()
             }
         }
 
+        /// @brief Check bullets for collisions
         for (auto &bulletEnt : m_entityManager.getEntities(EntityType::BULLET))
         {
             const Vec2 overlapBulletVec = Physics::GetOverlap(tileEnt, bulletEnt);
@@ -492,6 +578,43 @@ void Scene_Play::sCollision()
                     explosEnt->addComponent<CLifespan>(exolosionEntAni.animation.getAnimationLifespan(), m_currentFrame, false);
 
                     tileEnt->destroy();
+                }
+            }
+        }
+    }
+
+    /// @brief Check if flag has been touched and if it has fallen to a certain amount to trigger game over
+    for (auto &flagEnt : m_entityManager.getEntities(EntityType::FLAG))
+    {
+        if (flagEnt->hasComponent<CBoundingBox>())
+        {
+            const Vec2 overlapPlayerVec = Physics::GetOverlap(flagEnt, playerEnt);
+            if (flagEnt->getComponent<CAnimation>().animation.getName() == AnimationType::FLAG)
+            {
+                if (overlapPlayerVec.x > 0 && overlapPlayerVec.y > 0)
+                {
+                    flagEnt->hasComponent<CGravity>() ? NULL : flagEnt->addComponent<CGravity>(1);
+                }
+            }
+        }
+
+        if (flagEnt->hasComponent<CGravity>())
+        {
+            for (auto &flagPoleEnt : m_entityManager.getEntities(EntityType::FLAG_POLE))
+            {
+                const float flagPos = flagEnt->getComponent<CTransform>().pos.y;
+                const float flagPolePos = flagPoleEnt->getComponent<CTransform>().pos.y;
+                const float flagPoleHalfSize = (flagPoleEnt->getComponent<CAnimation>().animation.getSize().y * flagPoleEnt->getComponent<CTransform>().scale.y) / 2;
+                const float flagHeight = flagEnt->getComponent<CAnimation>().animation.getSize().y * flagEnt->getComponent<CTransform>().scale.y;
+                const float flagHalfSize = flagHeight / 2;
+
+                if (flagPos >= flagPolePos + flagPoleHalfSize - flagHeight - flagHeight / 2)
+                {
+                    const Vec2 flagPoleOverlap = Physics::GetOverlap(flagEnt, flagPoleEnt);
+                    CTransform &flagTransform = flagEnt->getComponent<CTransform>();
+                    flagTransform.velocity = Vec2();
+                    flagEnt->removeComponent<CGravity>();
+                    flagEnt->removeComponent<CBoundingBox>();
                 }
             }
         }

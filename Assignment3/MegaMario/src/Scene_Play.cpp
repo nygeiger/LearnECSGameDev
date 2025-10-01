@@ -28,6 +28,7 @@ void Scene_Play::init(const std::string &levelPath)
     registerAction(sf::Keyboard::Scancode::A, ScenePlayActions::LEFT);
     registerAction(sf::Keyboard::Scancode::D, ScenePlayActions::RIGHT);
     registerAction(sf::Keyboard::Scancode::Space, ScenePlayActions::SHOOT);
+    registerAction(sf::Keyboard::Scancode::F, ScenePlayActions::CONTINUE_GAME);
 
     m_gridText.setCharacterSize(12);
 
@@ -206,7 +207,7 @@ void Scene_Play::update()
 {
     m_entityManager.update();
 
-    if (!m_paused)
+    if (!m_paused && !m_gameOver)
     {
         sMovement();
         sActions();
@@ -593,7 +594,7 @@ void Scene_Play::sCollision()
             {
                 if (overlapPlayerVec.x > 0 && overlapPlayerVec.y > 0)
                 {
-                    flagEnt->hasComponent<CGravity>() ? NULL : flagEnt->addComponent<CGravity>(1);
+                    flagEnt->hasComponent<CGravity>() ? NULL : flagEnt->addComponent<CGravity>(1.5);
                 }
             }
         }
@@ -615,6 +616,7 @@ void Scene_Play::sCollision()
                     flagTransform.velocity = Vec2();
                     flagEnt->removeComponent<CGravity>();
                     flagEnt->removeComponent<CBoundingBox>();
+                    m_gameOver = true;
                 }
             }
         }
@@ -729,6 +731,12 @@ void Scene_Play::sDoInput(const Action &action)
         }
     }
 
+    if (m_gameOver) {
+        if (action.name() == ScenePlayActions::CONTINUE_GAME) {
+            m_game->changeScene("SCENE_PLAY", std::make_shared<Scene_Play>(m_game, m_levelPath, m_game->getAssets().getFont("byteSized2")), true);
+        }
+    }
+
     if (!playerEnt->getComponent<CInput>().right && !playerEnt->getComponent<CInput>().left &&
         !playerEnt->getComponent<CInput>().up && !playerEnt->getComponent<CInput>().shoot)
     {
@@ -814,7 +822,7 @@ void Scene_Play::sRender()
 {
     // Color the background darker so you know that the game is paused
 
-    if (!m_paused)
+    if (!m_paused && !m_gameOver)
     {
         m_game->window().clear(sf::Color(100, 100, 255));
     }
@@ -894,8 +902,17 @@ void Scene_Play::sRender()
         sf::Text debugText(m_game->getAssets().getFont("byteSized2"), "IN DEBUG MODE");
         debugText.setCharacterSize(20);
         debugText.setFillColor(sf::Color::White);
-        debugText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y * 2});
+        debugText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), static_cast<float>(view.getCenter().y - view.getSize().y / 2 + m_gridSize.y * 1.5)});
         m_game->window().draw(debugText);
+    }
+
+    if (m_gameOver)
+    {
+        sf::Text gameOverText(m_game->getAssets().getFont("byteSized2"), "GAME OVER\n\nPRESS \'F\' TO CONTINUE");
+        gameOverText.setCharacterSize(20);
+        gameOverText.setFillColor(sf::Color::White);
+        gameOverText.setPosition({static_cast<float>(view.getCenter().x - view.getSize().x / 2 + m_gridSize.x), view.getCenter().y - view.getSize().y / 2 + m_gridSize.y * 2});
+        m_game->window().draw(gameOverText);
     }
 
     m_game->window().display();

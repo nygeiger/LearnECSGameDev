@@ -21,6 +21,7 @@ class Scene_Play : public Scene
     bool m_drawTextures = true;
     bool m_drawCollision = false;
     bool m_drawGrid = false;
+    bool m_gameOver = false;
     const Vec2 m_gridSize = {64, 64}; // TODO: All scenes should have this?
     sf::Text m_gridText;
 
@@ -63,6 +64,7 @@ namespace ScenePlayActions
     const std::string TOGGLE_TEXTURE = "TOGGLE_TEXTURE";
     const std::string TOGGLE_COLLISION = "TOGGLE_COLLISION";
     const std::string TOGGLE_GRID = "TOGGLE_GRID";
+    const std::string CONTINUE_GAME = "CONTINUE_GAME";
 
     // Gameplay Actions
     const std::string UP = "UP";

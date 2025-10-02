@@ -77,6 +77,9 @@ namespace AnimationType
     /// @brief decoration animations
     const std::string EXPLOSION = "Explosion";
     const std::string EXPLOSION2 = "Explosion2";
+    const std::string CLOUD = "Cloud";
+    const std::string CLOUD2 = "Cloud2";
+    const std::string HILL = "Hill";
 
     /// @brief enity animations
     const std::string BULLET = "Bullet";

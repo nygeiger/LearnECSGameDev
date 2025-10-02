@@ -22,6 +22,8 @@ Tile Brick 6.75 7
 Tile Block 8 10
 Tile Block 9 10
 
+Decoration Cloud2 8 2
+
 # Start stair case
 Tile Block 10 10
 Tile Block 10 9
@@ -29,6 +31,8 @@ Tile Block 11 10
 Tile Block 11 9
 Tile Block 11 8
 # End stair case
+
+Decoration Cloud 16 1
 
 # Start Inverse stair case
 Tile Block 14 10
@@ -43,6 +47,7 @@ Tile Block 17 10
 Tile Block 18 10
 Tile Block 19 10
 Tile Block 20 10
+Decoration Hill 20 8
 Tile Block 21 10
 Tile Block 22 10
 Tile Block 23 10
@@ -52,14 +57,17 @@ Tile Block 26 10
 
 # Start jump Challenge Section
 Tile Block 26 9
+Decoration Cloud 26 2
 Tile Block 29 8
 Tile Block 30 7
 Tile Block 33 7
 Tile Block 34 7
 Tile Block 35 7
+Decoration Cloud2 37 1
 Tile Block 37 7
 Tile Block 39 7
 Tile Block 42 7
+Decoration Cloud 42.3 0.5
 Tile Block 43 7
 Tile Block 44 7
 Tile Block 45 7
@@ -79,6 +87,7 @@ Tile Brick 47.75 8.25
 # End jump challgene section
 
 Tile Block 52 9
+Decoration Cloud2 52 2
 Tile Block 53 9
 Tile Block 54 9
 Tile Block 55 9
@@ -86,11 +95,14 @@ Tile Block 56 9
 Tile Block 57 9
 Tile Block 58 9
 Tile Block 59 9
+Decoration Hill 59 7
 Tile Block 60 9
 Tile Block 61 9
 Tile Block 62 9
 Tile Block 63 9
+Decoration Hill 63.5 7
 Tile Block 64 9
+Decoration Cloud2 64 0
 Tile Block 65 9
 Tile Block 66 9
 Tile Block 67 9
@@ -100,6 +112,7 @@ Tile Block 70 9
 Tile Block 71 9
 Tile Block 72 9
 Tile Block 73 9
+Decoration Cloud2 76 2
 
 # Start question block staircase
 Tile Question 76.25 8.25
@@ -148,3 +161,6 @@ FlagPole FlagPole 83 6.825
 Flag Flag 82.75 5.65
 Tile Block 84 9
 # End endpoint section
+
+Decoration Cloud 83 2
+Decoration Cloud 86 2.5

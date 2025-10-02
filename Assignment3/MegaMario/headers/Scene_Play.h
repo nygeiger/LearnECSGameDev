@@ -92,10 +92,14 @@ namespace ScenePlayUtil
     const size_t BULLET_LIFESPAN = 90.0f;
     const float SHOOT_FRAME_LIMIT = 12.0f;
 
+    /// @brief Entity Size Utils
     const Vec2 QUESTION_TILE_SIZE = GRID_SIZE/2;
     const Vec2 BRICK_TILE_SIZE = GRID_SIZE/2;
     const Vec2 FLAGPOLE_TILE_SIZE = Vec2(GRID_SIZE.x * 0.75 / 2, GRID_SIZE.y * 6.6875 / 2);
     const Vec2 FLAG_TILE_SIZE = Vec2(GRID_SIZE.x / 2, GRID_SIZE.y / 2);
+    const Vec2 CLOUD_DECORATION_SIZE = Vec2(GRID_SIZE.x * 2, GRID_SIZE.y * 2);
+    const Vec2 CLOUD2_DECORATION_SIZE = Vec2(GRID_SIZE.x * 3, GRID_SIZE.y * 3);
+    const Vec2 HILL_DECORATION_SIZE = Vec2(GRID_SIZE.x * 5, GRID_SIZE.y * 3);
 
 }
 

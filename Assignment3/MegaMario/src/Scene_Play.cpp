@@ -69,6 +69,7 @@ void Scene_Play::loadLevel(const std::string &fileName)
         /// TODO: Logic for positioning tiles NOT the same size of a gird block is iffy. Especially with floats
         if (lineHeader == "Tile")
         {
+            /// TODO: See if I can refactor and group some of this logic
             auto tile = m_entityManager.addEntity(EntityType::TILE);
             std::string animationName;
             file >> animationName;
@@ -159,6 +160,48 @@ void Scene_Play::loadLevel(const std::string &fileName)
                 tile->getComponent<CTransform>().scale = textToGridBlockRatio;
                 tile->addComponent<CBoundingBox>(textureSize * textToGridBlockRatio);
                 auto newTextSize = textureSize * textToGridBlockRatio;
+            }
+        }
+        else if (lineHeader == "Decoration")
+        {
+            auto tile = m_entityManager.addEntity(EntityType::DECORATION);
+            std::string animationName;
+            file >> animationName;
+
+            if (animationName == AnimationType::CLOUD)
+            {
+                float gx, gy;
+                file >> gx >> gy;
+
+                tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), true);
+                tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+
+                const Vec2 &textureSize = tile->getComponent<CAnimation>().animation.getSize();
+                const Vec2 textToGridBlockRatio = getTextureToSizeRatio(textureSize, ScenePlayUtil::CLOUD_DECORATION_SIZE);
+                tile->getComponent<CTransform>().scale = textToGridBlockRatio;
+            }
+            else if (animationName == AnimationType::CLOUD2)
+            {
+                float gx, gy;
+                file >> gx >> gy;
+
+                tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), true);
+                tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+
+                const Vec2 &textureSize = tile->getComponent<CAnimation>().animation.getSize();
+                const Vec2 textToGridBlockRatio = getTextureToSizeRatio(textureSize, ScenePlayUtil::CLOUD2_DECORATION_SIZE);
+                tile->getComponent<CTransform>().scale = textToGridBlockRatio;
+            } else if (animationName == AnimationType::HILL)
+            {
+                float gx, gy;
+                file >> gx >> gy;
+
+                tile->addComponent<CAnimation>(m_game->getAssets().getAnimation(animationName), true);
+                tile->addComponent<CTransform>(Vec2((gx * m_gridSize.x) + m_gridSize.x / 2, (gy * m_gridSize.y) - m_gridSize.y / 2));
+
+                const Vec2 &textureSize = tile->getComponent<CAnimation>().animation.getSize();
+                const Vec2 textToGridBlockRatio = getTextureToSizeRatio(textureSize, ScenePlayUtil::HILL_DECORATION_SIZE);
+                tile->getComponent<CTransform>().scale = textToGridBlockRatio;
             }
         }
         else
@@ -731,8 +774,10 @@ void Scene_Play::sDoInput(const Action &action)
         }
     }
 
-    if (m_gameOver || m_game->debug()) {
-        if (action.name() == ScenePlayActions::CONTINUE_GAME) {
+    if (m_gameOver || m_game->debug())
+    {
+        if (action.name() == ScenePlayActions::CONTINUE_GAME)
+        {
             m_game->changeScene("SCENE_PLAY", std::make_shared<Scene_Play>(m_game, m_levelPath, m_game->getAssets().getFont("byteSized2")), true);
         }
     }

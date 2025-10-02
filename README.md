@@ -28,9 +28,9 @@ Projects I've completed while learning Game Dev, focused on the ECS architecture
 
 
 ## Assignment 3
+![fullPlayThrough](https://github.com/user-attachments/assets/884c5cc5-4ab9-4ea9-8c56-c6d743edb98d)
 
 ### Level Play through
-![fullLevelPlaythrough2](https://github.com/user-attachments/assets/3d962282-56a8-4214-a65b-8e6f654920d8)
 
 ## Texture Render Toggling
 ![textureCollisionsOverlapGrid2](https://github.com/user-attachments/assets/77d3ded8-c985-4487-9ce0-97dd1ae80665)

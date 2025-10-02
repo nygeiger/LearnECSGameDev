@@ -37,6 +37,7 @@ void Scene_Menu::init()
     m_menuText.setFont(m_game->getAssets().getFont("byteSized2"));
     m_menuText.setCharacterSize(64);
 
+    if (m_game->debug()) {
     auto brick = m_entityManager.addEntity(EntityType::TILE); // auto brick = m_entityManager.addEntity("tile");
     // IMPORTANT: always add the CAnimation compnent first so that gridToMidPixel can compute correctly
     // brick->addComponent<CAnimation>(m_game->getAssets().getAnimation("Question"), true);
@@ -86,6 +87,7 @@ void Scene_Menu::init()
     auto explosAni2 = m_entityManager.addEntity(EntityType::DECORATION);
     explosAni2->addComponent<CAnimation>(m_game->getAssets().getAnimation(AnimationType::EXPLOSION2), true);
     explosAni2->addComponent<CTransform>(Vec2(1280 / 2 + 184, 768 / 2 - 94));
+    }
 }
 
 void Scene_Menu::update()

@@ -1,4 +1,4 @@
-'EntityType | AnimationName | gX | gY'
+## EntityType | AnimationName | gX | gY ##
 
 Tile Block 0 10
 Tile Block 1 10
@@ -21,17 +21,23 @@ Tile Brick 6.75 7
 
 Tile Block 8 10
 Tile Block 9 10
+
+# Start stair case
 Tile Block 10 10
 Tile Block 10 9
 Tile Block 11 10
 Tile Block 11 9
 Tile Block 11 8
+# End stair case
 
+# Start Inverse stair case
 Tile Block 14 10
 Tile Block 14 9
 Tile Block 14 8
 Tile Block 15 10
 Tile Block 15 9
+# End inverse stair case
+
 Tile Block 16 10
 Tile Block 17 10
 Tile Block 18 10
@@ -43,6 +49,8 @@ Tile Block 23 10
 Tile Block 24 10
 Tile Block 25 10
 Tile Block 26 10
+
+# Start jump Challenge Section
 Tile Block 26 9
 Tile Block 29 8
 Tile Block 30 7
@@ -59,6 +67,7 @@ Tile Block 45 7
 Tile Question 46 4
 Tile Question 47 4
 
+##  Veritical brick obstacle start
 Tile Brick 47.75 5.25
 Tile Brick 47.75 5.75
 Tile Brick 47.75 6.25
@@ -66,7 +75,8 @@ Tile Brick 47.75 6.75
 Tile Brick 47.75 7.25
 Tile Brick 47.75 7.75
 Tile Brick 47.75 8.25
-
+##  Veritical brick obstacle start
+# End jump challgene section
 
 Tile Block 52 9
 Tile Block 53 9
@@ -91,6 +101,7 @@ Tile Block 71 9
 Tile Block 72 9
 Tile Block 73 9
 
+# Start question block staircase
 Tile Question 76.25 8.25
 
 Tile Question 76.75 8.25
@@ -121,6 +132,7 @@ Tile Question 79.25 7.25
 Tile Question 79.25 6.75
 Tile Question 79.25 6.25
 Tile Question 79.25 5.75
+# End question block staircase
 
 Tile Block 74 9
 Tile Block 75 9
@@ -129,10 +141,10 @@ Tile Block 77 9
 Tile Block 78 9
 Tile Block 79 9
 
+# Start endpoint section
 Tile Block 82 9
-
 Tile Block 83 9
 FlagPole FlagPole 83 6.825
 Flag Flag 82.75 5.65
-
 Tile Block 84 9
+# End endpoint section

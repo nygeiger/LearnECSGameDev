@@ -79,14 +79,14 @@ void GameEngine::changeScene()
 
 void GameEngine::changeScene(const std::string &sceneName, std::shared_ptr<Scene> scene, bool endCurrentScene)
 {
-    m_sceneMap[sceneName] = scene;
+        m_sceneMap[sceneName] = scene;
 
-    if (endCurrentScene)
-    {
-        m_sceneMap.erase(m_currentScene);
-    }
+        if (endCurrentScene)
+        {
+            m_sceneMap.erase(m_currentScene);
+        }
 
-    m_currentScene = sceneName;
+        m_currentScene = sceneName;
 }
 
 void GameEngine::sUserInput()

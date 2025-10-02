@@ -731,7 +731,7 @@ void Scene_Play::sDoInput(const Action &action)
         }
     }
 
-    if (m_gameOver) {
+    if (m_gameOver || m_game->debug()) {
         if (action.name() == ScenePlayActions::CONTINUE_GAME) {
             m_game->changeScene("SCENE_PLAY", std::make_shared<Scene_Play>(m_game, m_levelPath, m_game->getAssets().getFont("byteSized2")), true);
         }
